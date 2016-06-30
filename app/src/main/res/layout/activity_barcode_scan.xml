@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="dev.sturmtruppen.bibliovale.BarcodeScanActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scansiona"
+        android:id="@+id/btnScan"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Fetch"
+        android:id="@+id/btnTestBcode"
+        android:layout_alignTop="@+id/btnScan"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtBarcode"
+        android:text="9788807031373"
+        android:layout_below="@+id/btnScan"
+        android:layout_toRightOf="@+id/lblBarcode"
+        android:layout_alignRight="@+id/btnTestBcode"
+        android:layout_alignEnd="@+id/btnTestBcode" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Barcode:"
+        android:id="@+id/lblBarcode"
+        android:layout_alignBaseline="@+id/txtBarcode"
+        android:layout_alignBottom="@+id/txtBarcode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Titolo:"
+        android:id="@+id/lblTitle"
+        android:layout_below="@+id/txtBarcode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtTitle"
+        android:layout_below="@+id/txtBarcode"
+        android:layout_alignLeft="@+id/txtBarcode"
+        android:layout_alignStart="@+id/txtBarcode"
+        android:layout_alignRight="@+id/txtBarcode"
+        android:layout_alignEnd="@+id/txtBarcode" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Autori:"
+        android:id="@+id/lblAuthors"
+        android:layout_below="@+id/txtTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtAuthors"
+        android:layout_below="@+id/txtTitle"
+        android:layout_alignLeft="@+id/txtTitle"
+        android:layout_alignStart="@+id/txtTitle"
+        android:layout_alignRight="@+id/txtTitle"
+        android:layout_alignEnd="@+id/txtTitle"
+        android:maxLines="10"
+        android:clickable="false" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtYear"
+        android:layout_alignLeft="@+id/txtAuthors"
+        android:layout_alignStart="@+id/txtAuthors"
+        android:layout_alignRight="@+id/txtAuthors"
+        android:layout_alignEnd="@+id/txtAuthors"
+        android:layout_below="@+id/txtAuthors" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Anno"
+        android:id="@+id/lblYear"
+        android:layout_below="@+id/txtAuthors"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imgThumbnail"
+        android:baselineAlignBottom="true"
+        android:layout_below="@+id/txtYear"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
