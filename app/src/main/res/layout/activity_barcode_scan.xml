@@ -85,7 +85,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtAuthors"
+        android:id="@+id/lblzzAuthors"
         android:layout_below="@+id/txtTitle"
         android:layout_alignLeft="@+id/txtTitle"
         android:layout_alignStart="@+id/txtTitle"
@@ -97,12 +97,12 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtYear"
-        android:layout_alignLeft="@+id/txtAuthors"
-        android:layout_alignStart="@+id/txtAuthors"
-        android:layout_alignRight="@+id/txtAuthors"
-        android:layout_alignEnd="@+id/txtAuthors"
-        android:layout_below="@+id/txtAuthors" />
+        android:id="@+id/lblzzYear"
+        android:layout_alignLeft="@+id/lblAuthors"
+        android:layout_alignStart="@+id/lblAuthors"
+        android:layout_alignRight="@+id/lblAuthors"
+        android:layout_alignEnd="@+id/lblAuthors"
+        android:layout_below="@+id/lblAuthors" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Anno"
         android:id="@+id/lblYear"
-        android:layout_below="@+id/txtAuthors"
+        android:layout_below="@+id/lblAuthors"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -119,8 +119,17 @@
         android:layout_height="fill_parent"
         android:id="@+id/imgThumbnail"
         android:baselineAlignBottom="true"
-        android:layout_below="@+id/txtYear"
+        android:layout_below="@+id/lblYear"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RICERCA"
+        android:id="@+id/btnSearch"
+        android:layout_below="@+id/lblYear"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="76dp" />
 
 </RelativeLayout>

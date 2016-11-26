@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="1"
+    android:scrollbars="vertical"
+    android:layout_centerVertical="false"
+    android:isScrollContainer="true"
+    android:keepScreenOn="false"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TableRow android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/txtTitle"
+            android:layout_span="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center"
+            android:layout_gravity="center"
+            android:elegantTextHeight="true" />
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Autore:"
+            android:id="@+id/lblAuthors"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:clickable="false"
+            android:enabled="true"/>
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Genere:"
+            android:id="@+id/lblGenre"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <AutoCompleteTextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/acTxtGenre"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:enabled="true" />
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Anno:"
+            android:id="@+id/lblYear"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtYear"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:enabled="true" />
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Stato:"
+            android:id="@+id/lblStatus"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtStatus"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:enabled="true"/>
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="ISBN 10: "
+            android:id="@+id/lblIsbn10"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtIsbn10"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:enabled="true" />
+    </TableRow>
+
+    <TableRow android:layout_height="15pt"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="ISBN 13: "
+            android:id="@+id/lblIsbn13"
+            android:layout_width="40pt"
+            android:layout_height="20pt" />
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtIsbn13"
+            android:layout_width="match_parent"
+            android:layout_height="20pt"
+            android:enabled="true" />
+    </TableRow>
+
+    <TableRow android:layout_height="80pt"
+        android:layout_width="match_parent"
+        android:layout_gravity="top">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Copertina:"
+            android:id="@+id/lblThumbnail"
+            android:layout_width="40pt"
+            android:layout_height="80pt"
+            android:fadeScrollbars="false"
+            android:gravity="top"
+            android:layout_gravity="fill_vertical" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="80pt"
+            android:id="@+id/imgThumbnail"
+            android:baselineAlignBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingTop="5pt" />
+    </TableRow>
+
+    <TableRow android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Note:"
+            android:id="@+id/lblNotes"
+            android:layout_width="40pt"
+            android:layout_height="80pt"/>
+
+        <EditText
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtNotes"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight ="1"
+            android:enabled="true"
+            android:fadeScrollbars="true"
+            android:gravity="top"
+            android:lines="50"
+            android:minLines="1"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"/>
+    </TableRow>
+
+
+</TableLayout>
+</ScrollView>

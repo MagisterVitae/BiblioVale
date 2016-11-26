@@ -1,7 +1,8 @@
-package dev.sturmtruppen.bibliovale.bl;
+package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
 
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.GoogleBooksUtils;
 
 /**
  * Created by sturmtruppen on 30/04/16.
@@ -50,6 +54,9 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
             }
 
             Book book = GoogleBooksUtils.getBook(json);
+
+            if (book == null)
+                return null;
 
             is = (InputStream) new URL(book.getThumbnailUrl()).getContent();
             Drawable thumbnail = Drawable.createFromStream(is, book.getTitle());

@@ -22,13 +22,13 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.concurrent.ExecutionException;
 
-import dev.sturmtruppen.bibliovale.bl.Book;
-import dev.sturmtruppen.bibliovale.bl.GoogleBooksFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
 
 
 public class BarcodeScanActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button btnScan, btnTestBcode;
+    private Button btnScan, btnTestBcode, btnSearch;
     private EditText txtBarcode, txtTitle, txtAuthors, txtYear;
     private ImageView imgThumbnail;
     /**
@@ -48,14 +48,16 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         //Assegnamento handle oggetti visualizzati in activity
         btnScan = (Button) findViewById(R.id.btnScan);
         btnTestBcode = (Button) findViewById(R.id.btnTestBcode);
+        btnSearch = (Button) findViewById(R.id.btnSearch);
         txtBarcode = (EditText) findViewById(R.id.txtBarcode);
         txtTitle = (EditText) findViewById(R.id.txtTitle);
-        txtAuthors = (EditText) findViewById(R.id.txtAuthors);
-        txtYear = (EditText) findViewById(R.id.txtYear);
+       // txtAuthors = (EditText) findViewById(R.id.lblAuthors);
+       // txtYear = (EditText) findViewById(R.id.lblYear);
         imgThumbnail = (ImageView) findViewById(R.id.imgThumbnail);
 
         btnScan.setOnClickListener(this);
         btnTestBcode.setOnClickListener(this);
+        btnSearch.setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +116,13 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
             {
                 this.testFetch(txtBarcode.getText().toString());
                 break;
+            }
+            case R.id.btnSearch:
+            {
+                // definisco l'intenzione
+                Intent openResultsActivity = new Intent(BarcodeScanActivity.this, ResultsActivity.class);
+                // passo all'attivazione dell'activity Pagina.java
+                startActivity(openResultsActivity);
             }
             default:break;
         }
