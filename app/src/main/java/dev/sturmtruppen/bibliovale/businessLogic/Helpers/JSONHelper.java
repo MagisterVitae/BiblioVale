@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
 
@@ -15,7 +16,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
  */
 public final class JSONHelper {
 
-    public static List<Book> getBookList(String jsonList){
+    public static List<Book> bookListDeserialize(String jsonList){
         List<Book> books = new ArrayList<Book>();
 
         try {
@@ -35,7 +36,7 @@ public final class JSONHelper {
         return books;
     }
 
-    public static Book getBook(String strBook){
+    public static Book bookDeserialize(String strBook){
         JSONObject jsonBook = null;
         try {
             jsonBook = new JSONObject(strBook);
@@ -48,7 +49,7 @@ public final class JSONHelper {
         return book;
     }
 
-    public static List<Genre> getGenresList(String jsonList){
+    public static List<Genre> genresListDeserialize(String jsonList){
         List<Genre> genres = new ArrayList<Genre>();
 
         try {
@@ -66,5 +67,25 @@ public final class JSONHelper {
         }
 
         return genres;
+    }
+
+    public static List<Author> authorsListDeserialize(String jsonList){
+        List<Author> authors = new ArrayList<Author>();
+
+        try {
+            JSONArray jsonAuthors;
+            jsonAuthors = new JSONArray(jsonList);
+            if (jsonAuthors != null){
+                for (int i=0; i<jsonAuthors.length(); i++){
+                    JSONObject jsonAuthor = jsonAuthors.getJSONObject(i);
+                    Author author = new Author(jsonAuthor);
+                    authors.add(author);
+                }
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return authors;
     }
 }

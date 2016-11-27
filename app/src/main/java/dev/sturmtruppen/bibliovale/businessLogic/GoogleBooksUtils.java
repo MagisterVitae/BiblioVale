@@ -41,7 +41,7 @@ public final class GoogleBooksUtils{
             book.setTotalItems(totItems);
             if (authorsNode.isArray()) {
                 for (final JsonNode objNode : authorsNode) {
-                    book.setAuthor(objNode.asText());
+                    //book.setAuthor(objNode.asText()); //// TODO: 27/11/2016 CORREGGERE CON OGGETTO AUTHORS
                 }
             }
             if (isbnNode.isArray()){

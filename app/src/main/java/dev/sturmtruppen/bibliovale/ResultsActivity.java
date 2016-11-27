@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class ResultsActivity extends AppCompatActivity {
         // Recupero lista di libri
         String jsonBookList = this.getIntent().getStringExtra(GlobalConstants.BOOKLIST_KEY);
         // Conversione JSON in lista di libri
-        books = JSONHelper.getBookList(jsonBookList);
+        books = JSONHelper.bookListDeserialize(jsonBookList);
 
         // Scrivo lista di libri su activity
         final ArrayList <String> listp = new ArrayList<String>();

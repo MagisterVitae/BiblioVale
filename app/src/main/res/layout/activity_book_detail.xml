@@ -38,9 +38,9 @@
             android:layout_width="40pt"
             android:layout_height="20pt" />
 
-        <EditText
+        <AutoCompleteTextView
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/txtAuthor"
+            android:id="@+id/acTxtAuthor"
             android:layout_width="match_parent"
             android:layout_height="20pt"
             android:clickable="false"
@@ -56,12 +56,13 @@
             android:layout_width="40pt"
             android:layout_height="20pt" />
 
-        <AutoCompleteTextView
+        <Spinner
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/acTxtGenre"
+            android:id="@+id/spinGenre"
             android:layout_width="match_parent"
             android:layout_height="20pt"
-            android:enabled="true" />
+            android:enabled="true"
+            style="@style/AlertDialog.AppCompat" />
     </TableRow>
 
     <TableRow android:layout_height="15pt"
@@ -90,9 +91,9 @@
             android:layout_width="40pt"
             android:layout_height="20pt" />
 
-        <EditText
+        <Spinner
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/txtStatus"
+            android:id="@+id/spinStatus"
             android:layout_width="match_parent"
             android:layout_height="20pt"
             android:enabled="true"/>

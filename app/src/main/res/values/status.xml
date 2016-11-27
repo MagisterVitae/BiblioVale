@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><resources>
+    <string-array name="status">
+        <item>Letto</item>
+        <item>Non letto</item>
+        <item>In lettura</item>
+        <item>Da consultazione</item>
+        <item>Abbandonato</item>
+        <item>Wish list</item>
+    </string-array>
+</resources>

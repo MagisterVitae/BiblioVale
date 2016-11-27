@@ -15,7 +15,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
 /**
  * Created by Matteo on 27/08/2016.
  */
-public class BiblioValeBookFetcher extends AsyncTask<String, String, String> {
+public class BiblioValeDataFetcher extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... params) {

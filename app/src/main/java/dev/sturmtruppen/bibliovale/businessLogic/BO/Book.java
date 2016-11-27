@@ -7,20 +7,19 @@ import android.text.TextUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
 
 public class Book{
 
     private int id;
     private String title;
-    private List<String> authors = new ArrayList<String>();
+    private List<Author> authors = new ArrayList<Author>();
     private String year;
     private String thumbnailUrl;
     private String isbn10;
@@ -52,7 +51,7 @@ public class Book{
             // AUTORE SINGOLO
             String name = _jsonBook.getString("name");
             String surname = _jsonBook.getString("surname");
-            this.setAuthor(surname + ", " + name);
+            this.setAuthors(this.fetchAuthors(name, surname));
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -74,17 +73,17 @@ public class Book{
         this.title = title;
     }
 
-    public List<String> getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<String> authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 
-    public void setAuthor(String author) {
+    /*public void setAuthor(String author) {
         this.authors.add(author);
-    }
+    }*/
 
     public String getYear() {
         return year;
@@ -151,8 +150,8 @@ public class Book{
         out = out + "ID: " + this.id + "\n";
         out = out + "Title: " + this.title + "\n";
         out = out + "Authors: ";
-        for(final String author : this.authors){
-            out = out + author + ", ";
+        for(Author author : this.authors){
+            out = out + author.getName() + ", " + author.getSurname();
         }
         out = out + "\n";
         out = out + "Year: " + this.year + "\n";
@@ -206,5 +205,15 @@ public class Book{
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    private List<Author> fetchAuthors(String name, String surname) {
+        List<Author> authorsList = new ArrayList<Author>();
+
+        String jsonAuthors = BiblioValeApi.getAuthors(name, surname);
+        if(TextUtils.isEmpty(jsonAuthors))
+            return authorsList;
+        authorsList = JSONHelper.authorsListDeserialize(jsonAuthors);
+        return authorsList;
     }
 }

@@ -22,6 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.concurrent.ExecutionException;
 
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
 
@@ -153,8 +154,8 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
                     Toast.makeText(this, "Nessun libro trovato con questo barcode!", Toast.LENGTH_LONG).show();
                 else {
                     String authors = "";
-                    for (String author : book.getAuthors()) {
-                        authors = authors + author + ", ";
+                    for (Author author : book.getAuthors()) {
+                        authors += author.getName() + ", " + author.getSurname() + "; ";
                     }
                     txtTitle.setText(book.getTitle());
                     txtYear.setText(book.getYear());
