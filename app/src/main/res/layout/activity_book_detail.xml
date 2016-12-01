@@ -43,8 +43,9 @@
             android:id="@+id/acTxtAuthor"
             android:layout_width="match_parent"
             android:layout_height="20pt"
-            android:clickable="false"
-            android:enabled="true"/>
+            android:enabled="true"
+            android:completionThreshold="1"
+            android:singleLine="true" />
     </TableRow>
 
     <TableRow android:layout_height="15pt"

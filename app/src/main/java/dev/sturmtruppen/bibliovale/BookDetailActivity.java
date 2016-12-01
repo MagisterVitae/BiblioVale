@@ -1,5 +1,7 @@
 package dev.sturmtruppen.bibliovale;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -82,9 +84,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-
         //Listener
-        acTxtAuthor.setOnClickListener(this);
+        //acTxtAuthor.setOnClickListener(this);
         spinGenre.setOnItemSelectedListener(this);
 
         //Recupero libro da visualizzare
@@ -172,6 +173,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private void showBook(String jsonBook){
         Book book = JSONHelper.bookDeserialize(jsonBook);
         List<Author> authorsList = book.getAuthors();
+        Drawable bookCover = null;
         String authors = "";
 
         //AUTORE SINGOLO
@@ -191,8 +193,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         this.savedGenre = book.getGenre().getName();
         this.savedAuthor = authors;
 
-        imgThumbnail.setImageDrawable(book.fetchThumbnail());
+        bookCover = book.fetchThumbnail();
+        if(bookCover == null)
+            bookCover = ContextCompat.getDrawable(this, R.drawable.cover_not_found);
+        imgThumbnail.setImageDrawable(bookCover);
     }
+
 
 
 }
