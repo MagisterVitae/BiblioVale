@@ -36,13 +36,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".SearchActivity"
-            android:label="Ricerca"/>
-        <activity android:name=".BookDetailActivity"
-            android:label="Dettaglio"/>
-        <activity android:name=".ResultsActivity"
-            android:label="Risultati"/>
+        <activity
+            android:name=".SearchActivity"
+            android:label="Ricerca" />
+        <activity
+            android:name=".BookDetailActivity"
+            android:label="Dettaglio" />
+        <activity
+            android:name=".ResultsActivity"
+            android:label="Risultati" />
+        <activity android:name=".ConfigurationActivity"></activity>
     </application>
 
 </manifest>

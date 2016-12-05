@@ -1,8 +1,10 @@
 package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;

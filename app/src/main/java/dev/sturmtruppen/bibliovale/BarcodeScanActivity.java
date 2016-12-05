@@ -115,7 +115,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
             }
             case R.id.btnTestBcode:
             {
-                this.testFetch(txtBarcode.getText().toString());
+               // this.testFetch(txtBarcode.getText().toString());
                 break;
             }
             case R.id.btnSearch:
@@ -137,7 +137,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 txtBarcode.setText(scanResult.getContents());
-                this.testFetch(scanResult.getContents());
+                //this.testFetch(scanResult.getContents());
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
@@ -145,10 +145,11 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         }
 
     }
-
+    /*
     private void testFetch(String barcode) {
         if(checkConnectivity(this)){
             try {
+
                 Book book = new GoogleBooksFetcher().execute(barcode).get();
                 if(book == null)
                     Toast.makeText(this, "Nessun libro trovato con questo barcode!", Toast.LENGTH_LONG).show();
@@ -172,7 +173,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
             Toast.makeText(this, "Connessione ad Internet non disponibile!", Toast.LENGTH_LONG).show();
 
     }
-
+    */
     private boolean checkConnectivity(Context context){
         ConnectivityManager connMgr = (ConnectivityManager)getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

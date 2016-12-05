@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -15,12 +16,15 @@ import java.util.List;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
 public class ResultsActivity extends AppCompatActivity {
     private ListView activityBookList;
 
     List<Book> books = new ArrayList<Book>();
+    private ProgressBar progCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class ResultsActivity extends AppCompatActivity {
 
         //Assegnamento handle oggetti visualizzati in activity
         activityBookList = (ListView) findViewById(R.id.lstBooks);
+        progCircle = (ProgressBar) findViewById(R.id.resultsProgCir);
 
         activityBookList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -40,6 +45,9 @@ public class ResultsActivity extends AppCompatActivity {
                 openDetailsActivity(jsonBook);
             }
         });
+
+        //Proprietà
+        progCircle.setVisibility(View.GONE);
 
         //Visualizza risultati
         this.showResults();
@@ -73,11 +81,16 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
     private void openDetailsActivity(String jsonBook){
-        // definisco l'intent
-        Intent openResultsActivity = new Intent(ResultsActivity.this, BookDetailActivity.class);
-        openResultsActivity.putExtra(GlobalConstants.BOOK_KEY, jsonBook);
-        // passo all'attivazione dell'activity
-        startActivity(openResultsActivity);
+        //Mostro progress circle
+        progCircle.setVisibility(View.VISIBLE);
+
+        List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
+        putExtraList.add(new PutExtraPair(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR, GlobalConstants.DETAILS_SHOW_UPDATE));
+        putExtraList.add(new PutExtraPair(GlobalConstants.BOOK_KEY, jsonBook));
+        ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
+
+        //Nascondo progress circle
+        progCircle.setVisibility(View.GONE);
     }
 
 }

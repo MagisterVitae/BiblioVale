@@ -14,6 +14,10 @@ public class Author {
     private String surname;
 
     public Author(){super();}
+    public Author(String _name, String _surname){
+        this.name = _name;
+        this.surname = _surname;
+    }
     public Author(JSONObject _jsonBook) {
         try {
             this.originalJson = _jsonBook.toString();

@@ -10,6 +10,7 @@ import java.util.List;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
 
 /**
  * Created by Matteo on 27/08/2016.
@@ -87,5 +88,17 @@ public final class JSONHelper {
         }
 
         return authors;
+    }
+
+    public static DBApiResponse dbApiResponseDeserialize(String strResponse){
+       JSONObject jsonResponse = null;
+        try {
+            jsonResponse = new JSONObject(strResponse);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        DBApiResponse response = new DBApiResponse(jsonResponse);
+        return response;
     }
 }
