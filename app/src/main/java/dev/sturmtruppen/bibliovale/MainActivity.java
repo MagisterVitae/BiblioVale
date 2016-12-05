@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -35,6 +37,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Imposto variabili globali dalle sharedPreferences
         this.setGlobalVars();
+
+        //Verifico connettività
+        this.checkConnectivity();
+    }
+
+    private void checkConnectivity() {
+        if(!HttpConnectionHelper.checkConnectivity(this)) {
+            Toast.makeText(this, "Attivare connessione ad internet", Toast.LENGTH_LONG).show();
+            btnNewBook.setEnabled(false);
+            btnSearch.setEnabled(false);
+        }
     }
 
     @Override

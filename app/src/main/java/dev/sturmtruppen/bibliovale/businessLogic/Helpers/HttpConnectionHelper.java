@@ -1,6 +1,9 @@
 package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,6 +56,14 @@ public final class HttpConnectionHelper {
         }
 
         return jsonData;
+    }
+
+    public static boolean checkConnectivity(Context context){
+        ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected())
+            return true;
+        return false;
     }
 
 }

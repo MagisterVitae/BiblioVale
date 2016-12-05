@@ -38,7 +38,7 @@
             android:hint="Titolo" />
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -53,10 +53,11 @@
             android:layout_width="match_parent"
             android:enabled="true"
             android:completionThreshold="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:layout_height="wrap_content" />
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -69,12 +70,11 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/spinGenre"
             android:layout_width="match_parent"
-            android:layout_height="20pt"
-            android:enabled="true"
-            style="@style/AlertDialog.AppCompat" />
+            android:layout_height="wrap_content"
+            android:enabled="true" />
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -87,12 +87,12 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/txtYear"
             android:layout_width="match_parent"
-            android:layout_height="20pt"
+            android:layout_height="wrap_content"
             android:enabled="true"
             android:singleLine="true" />
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -105,11 +105,11 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/spinStatus"
             android:layout_width="match_parent"
-            android:layout_height="20pt"
+            android:layout_height="wrap_content"
             android:enabled="true"/>
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -122,12 +122,12 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/txtIsbn10"
             android:layout_width="match_parent"
-            android:layout_height="20pt"
+            android:layout_height="wrap_content"
             android:enabled="true"
             android:singleLine="true" />
     </TableRow>
 
-    <TableRow android:layout_height="15pt"
+    <TableRow android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -140,7 +140,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/txtIsbn13"
             android:layout_width="match_parent"
-            android:layout_height="20pt"
+            android:layout_height="wrap_content"
             android:enabled="true"
             android:singleLine="true" />
     </TableRow>

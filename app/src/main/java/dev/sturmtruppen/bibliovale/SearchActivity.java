@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener{
@@ -56,6 +58,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         //Proprietà
         progCircle.setVisibility(View.GONE);
+
+        //Verifico connettività
+        this.checkConnectivity();
     }
 
     @Override
@@ -63,18 +68,29 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         //Individuo l'oggetto cliccato
         switch (v.getId()) {
             case R.id.btnSearch: {
-                //Mostro progress circle
-                progCircle.setVisibility(View.VISIBLE);
                 this.btnSearchLogic();
-                //Nascondo progress circle
-                progCircle.setVisibility(View.GONE);
             }
             default:
                 break;
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        progCircle.setVisibility(View.GONE);
+    }
+
+    private void checkConnectivity() {
+        if(!HttpConnectionHelper.checkConnectivity(this)){
+            Toast.makeText(this, "Attivare connessione ad internet", Toast.LENGTH_LONG).show();
+            this.btnSearch.setEnabled(false);
+        }
+    }
+
     private void btnSearchLogic(){
+        //Mostro progress circle
+        progCircle.setVisibility(View.VISIBLE);
         //Recupero lista libri
         String jsonBookList = BiblioValeApi.getBookList(txtAuthSurname.getText().toString(),
                                                         txtAuthName.getText().toString(),

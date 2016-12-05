@@ -23,18 +23,58 @@ import dev.sturmtruppen.bibliovale.businessLogic.GoogleBooksUtils;
 public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
 
     private static final String googleKey = "AIzaSyAsz4PRSi2OIlRiu_uXZ-xW--PxEgC1X9E";
-    private static final String baseUrl = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
+    private static final String baseUrl = "https://www.googleapis.com/books/v1/volumes?q=";
 
     @Override
     protected Book doInBackground(String... strings) {
+        String isbn13 = strings[0];
+        String isbn10 = strings[1];
+        String title = strings[2];
+        String autSurname = strings[3];
+        String autName = strings[4];
+        Book book;
+
+        book = this.searchByIsbn(isbn13);
+        if(book==null)
+            book = this.searchByIsbn(isbn10);
+        if(book==null)
+            book = this.searchByTitleAndAuthor(title, autSurname, autName);
+        return book;
+    }
+
+
+    @Override
+    protected void onPostExecute(Book result){
+        super.onPostExecute(result);
+    }
+
+    private Book searchByIsbn(String isbn){
+        String completeUrl = baseUrl +
+                "isbn:" + isbn +
+                "&key=" + googleKey;
+        if(!isbn.isEmpty())
+            return bookSearcher(completeUrl);
+        else
+            return null;
+    }
+
+    private Book searchByTitleAndAuthor(String title, String autSurname, String autName) {
+        String completeUrl = baseUrl +
+                "title:" + title.replace(" ", "%20") +
+                "&author:" + autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20") +
+                "&key=" + googleKey;
+        if(!title.isEmpty() && !autSurname.isEmpty() && !autName.isEmpty())
+            return bookSearcher(completeUrl);
+        else
+            return null;
+    }
+
+    private Book bookSearcher(String completeUrl){
         String json = "";
-        String isbn = strings[0];
         HttpURLConnection conn = null;
         BufferedReader br = null;
         InputStream is = null;
-
         try {
-            String completeUrl = baseUrl + isbn + "&key=" + googleKey;
             URL url = new URL(completeUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -90,8 +130,5 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
         return null;
     }
 
-    @Override
-    protected void onPostExecute(Book result){
-        super.onPostExecute(result);
-    }
+
 }

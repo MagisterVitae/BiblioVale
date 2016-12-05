@@ -53,6 +53,12 @@ public class ResultsActivity extends AppCompatActivity {
         this.showResults();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        progCircle.setVisibility(View.GONE);
+    }
+
     private void showResults(){
         // Recupero lista di libri
         String jsonBookList = this.getIntent().getStringExtra(GlobalConstants.BOOKLIST_KEY);
@@ -88,9 +94,6 @@ public class ResultsActivity extends AppCompatActivity {
         putExtraList.add(new PutExtraPair(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR, GlobalConstants.DETAILS_SHOW_UPDATE));
         putExtraList.add(new PutExtraPair(GlobalConstants.BOOK_KEY, jsonBook));
         ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
-
-        //Nascondo progress circle
-        progCircle.setVisibility(View.GONE);
     }
 
 }

@@ -179,14 +179,13 @@ public class Book{
 
     public Drawable fetchThumbnail(){
         Book book = null;
-
+        String[] params = {this.isbn13, this.isbn10, this.title, this.authors.get(0).getSurname(), this.authors.get(0).getName()};
+        /*
         if (TextUtils.isEmpty(this.isbn10) && TextUtils.isEmpty(this.isbn13))
             return null;
-
+        */
         try {
-            book = new GoogleBooksFetcher().execute(this.isbn13).get();
-            if (book == null)
-                book = new GoogleBooksFetcher().execute(this.isbn10).get();
+            book = new GoogleBooksFetcher().execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
             return null;
