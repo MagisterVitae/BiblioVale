@@ -21,6 +21,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.DialogInterface;
 
+import com.google.zxing.common.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -202,7 +204,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private void setGenreSpinnerText(String text){
         for(int i= 0; i < spinGenre.getAdapter().getCount(); i++)
         {
-            if(spinGenre.getAdapter().getItem(i).toString().contains(text))
+            if(spinGenre.getAdapter().getItem(i).toString().toUpperCase().contains(text.toUpperCase()))
             {
                 spinGenre.setSelection(i);
                 return;
@@ -213,7 +215,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private void setStatusSpinnerText(String text){
         for(int i= 0; i < spinStatus.getAdapter().getCount(); i++)
         {
-            if(spinStatus.getAdapter().getItem(i).toString().contains(text))
+            if(spinStatus.getAdapter().getItem(i).toString().toUpperCase().contains(text.toUpperCase()))
             {
                 spinStatus.setSelection(i);
                 return;
@@ -350,6 +352,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                             case 0: {
                                 authorsArray = fetchAuthorsArray();
                                 acTxtAuthor.setText(strNewAuth);
+                                savedAuthor = strNewAuth.toString();
+                                showToast(String.format("Autore \"%s\" creato con successo", savedAuthor), Toast.LENGTH_SHORT);
                                 break;
                             }
                             default: {
@@ -371,6 +375,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     {
         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    public void showToast(String msg, int len){
+        Toast.makeText(this, msg, len).show();
     }
 
 }
