@@ -2,11 +2,13 @@ package dev.sturmtruppen.bibliovale;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
@@ -15,6 +17,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 public class ConfigurationActivity extends AppCompatActivity implements View.OnClickListener{
     EditText txtConfigURL;
     Button btnConfigSave;
+    TextView lblVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,7 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
 
         txtConfigURL = (EditText) findViewById(R.id.txtConfigURL);
         btnConfigSave = (Button) findViewById(R.id.btnConfigSave);
+        lblVersion = (TextView) findViewById(R.id.lblVersion);
 
         btnConfigSave.setOnClickListener(this);
 
@@ -41,6 +45,11 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
 
     private void fillActivity(){
         txtConfigURL.setText(GlobalConstants.webSiteUrl);
+        try {
+            lblVersion.setText(String.format("Versione: %s", getPackageManager().getPackageInfo(getPackageName(), 0).versionName));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void savePreferencesData() {

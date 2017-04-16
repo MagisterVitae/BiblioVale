@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:layout_weight="0.3"
     android:gravity="right"
-    android:textSize="30sp"
+    android:textSize="22sp"
     />

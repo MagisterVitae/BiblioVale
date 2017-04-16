@@ -20,14 +20,25 @@
         android:id="@+id/lblConfigURL" />
 
     <EditText
+        android:id="@+id/txtConfigURL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:ems="10"
         android:layout_below="@+id/lblConfigURL"
         android:layout_centerHorizontal="true"
-        android:id="@+id/txtConfigURL"
-        android:hint="URL" />
+        android:ems="10"
+        android:hint="URL"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/lblVersion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnConfigSave"
+        android:layout_marginTop="21dp"
+        android:text="Versione"
+        android:textColor="@android:color/background_dark" />
 
     <Button
         android:text="Salva"
