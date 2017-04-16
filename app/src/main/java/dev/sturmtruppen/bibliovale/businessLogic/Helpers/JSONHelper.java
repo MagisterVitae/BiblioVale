@@ -1,10 +1,13 @@
 package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
 
+import android.util.Pair;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
@@ -100,5 +103,40 @@ public final class JSONHelper {
 
         DBApiResponse response = new DBApiResponse(jsonResponse);
         return response;
+    }
+
+    // Deserializzazione di generiche coppie chiave-valore
+    public static List<Pair<String, String>> pairListDeserialize(String stringPairs){
+        List<Pair<String,String>> pairList = new ArrayList<>();
+        try {
+            JSONArray jsonPairs;
+            jsonPairs = new JSONArray(stringPairs);
+            if (jsonPairs != null){
+                for (int i=0; i<jsonPairs.length(); i++){
+                    JSONObject jsonPair = jsonPairs.getJSONObject(i);
+                    int j = 0;
+                    String key = "", value = "";
+                    for(Iterator<String> iter = jsonPair.keys(); iter.hasNext();) {
+                        String jsonKey = iter.next();
+                        String jsonValue = "";
+                        try {
+                            jsonValue = (String) jsonPair.get(jsonKey);
+                        } catch (JSONException e) {
+                            // Something went wrong!
+                        }
+                        if(j==0)
+                            key = jsonValue;
+                        else
+                            value = jsonValue;
+                        j++;
+                    }
+                    Pair<String, String> pair = new Pair<>(key, value);
+                    pairList.add(pair);
+                }
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return pairList;
     }
 }

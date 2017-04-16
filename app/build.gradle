@@ -12,7 +12,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName '1.0.0.3'
+        versionName '1.0.1.0'
     }
     buildTypes {
         release {
@@ -47,6 +47,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     compile 'com.google.zxing:core:3.2.1'
     compile 'com.android.support:appcompat-v7:25.3.1'   // Version 23+ is required
@@ -57,4 +60,10 @@ android {
 }
 dependencies {
     compile 'com.android.support:design:25.+'
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:+'
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:+'
 }

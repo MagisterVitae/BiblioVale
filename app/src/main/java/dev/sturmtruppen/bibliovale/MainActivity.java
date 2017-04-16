@@ -7,18 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button btnSearch, btnNewBook, btnOpenConfig;
+    private Button btnSearch, btnNewBook, btnOpenConfig, btnWishList, btnStats;
+    private ProgressBar progCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,17 +32,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSearch = (Button) findViewById(R.id.btnSearch);
         btnNewBook = (Button) findViewById(R.id.btnNewBook);
         btnOpenConfig = (Button) findViewById(R.id.btnOpenConfig);
+        btnWishList = (Button) findViewById(R.id.btnWishList);
+        btnStats = (Button) findViewById(R.id.btnStats);
+        progCircle = (ProgressBar) findViewById(R.id.mainProgCir);
 
         //Listener
         btnSearch.setOnClickListener(this);
         btnNewBook.setOnClickListener(this);
         btnOpenConfig.setOnClickListener(this);
+        btnWishList.setOnClickListener(this);
+        btnStats.setOnClickListener(this);
 
         //Imposto variabili globali dalle sharedPreferences
         this.setGlobalVars();
 
+        //Proprietà
+        progCircle.setVisibility(View.GONE);
+
         //Verifico connettività
         this.checkConnectivity();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        progCircle.setVisibility(View.GONE);
     }
 
     private void checkConnectivity() {
@@ -66,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ActivityFlowHelper.goToActivity(this, ConfigurationActivity.class);
                 break;
             }
+            case R.id.btnWishList: {
+                btnWishListLogic();
+                break;
+            }
+            case R.id.btnStats: {
+                ActivityFlowHelper.goToActivity(this, StatsActivity.class);
+                break;
+            }
             default:
                 break;
         }
@@ -86,6 +111,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
         putExtraList.add(new PutExtraPair(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR, GlobalConstants.DETAILS_CREATE));
         ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
+    }
+
+    private void btnWishListLogic(){
+        //Mostro progress circle
+        progCircle.setVisibility(View.VISIBLE);
+        //Recupero lista libri
+        String jsonBookList = BiblioValeApi.getWishList();
+
+        List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
+        putExtraList.add(new PutExtraPair(GlobalConstants.BOOKLIST_KEY, jsonBookList));
+        ActivityFlowHelper.goToActivity(this, ResultsActivity.class, putExtraList);
     }
 
 }

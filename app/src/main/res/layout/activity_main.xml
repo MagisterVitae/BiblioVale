@@ -9,6 +9,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="dev.sturmtruppen.bibliovale.MainActivity">
 
+    <ProgressBar
+        android:id="@+id/mainProgCir"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSearch"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:translationZ="10dp"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,11 +41,30 @@
         android:id="@+id/btnNewBook" />
 
     <Button
-        android:text="Configurazioni"
+        android:id="@+id/btnWishList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnNewBook"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Wish List" />
+
+    <Button
+        android:id="@+id/btnStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnWishList"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Statistiche" />
+
+    <Button
+        android:text="Configurazioni"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStats"
+        android:layout_centerHorizontal="true"
         android:id="@+id/btnOpenConfig"
         android:layout_marginTop="18dp" />
+
 </RelativeLayout>

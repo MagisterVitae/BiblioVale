@@ -20,7 +20,7 @@ public class BiblioValeApi {
 
     // Elenco API REST PHP esposte
     private enum F_NAMES {getBook, getAuthors, getIsbn, createBook, createAuthor,
-                            getGenreID, getStatusID, getAllGenres, getAllAuthors, updateBook}
+                            getGenreID, getStatusID, getAllGenres, getAllAuthors, updateBook, getWishList, getStats}
 
     public static String getBookList(String _surname, String _name, String _title){
         String jsonBookList = "";
@@ -213,5 +213,45 @@ public class BiblioValeApi {
         }
 
         return jsonResponse;
+    }
+
+    public static String getWishList(){
+        String jsonBookList = "";
+
+        // Preparazione url per chiamata REST
+        String urlString = Uri.parse(URL).buildUpon()
+                .appendQueryParameter("fName", F_NAMES.getWishList.name())
+                .build().toString();
+
+        // Fetch book list
+        try {
+            jsonBookList = new BiblioValeDataFetcher().execute(urlString).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return jsonBookList;
+    }
+
+    public static String getStats(){
+        String jsonStatList = "";
+
+        // Preparazione url per chiamata REST
+        String urlString = Uri.parse(URL).buildUpon()
+                .appendQueryParameter("fName", F_NAMES.getStats.name())
+                .build().toString();
+
+        // Fetch stats
+        try {
+            jsonStatList = new BiblioValeDataFetcher().execute(urlString).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return jsonStatList;
     }
 }
