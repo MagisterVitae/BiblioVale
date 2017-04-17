@@ -38,24 +38,19 @@
         </activity>
         <activity
             android:name=".SearchActivity"
-            android:label="Ricerca"
-            android:parentActivityName=".MainActivity" />
+            android:label="Ricerca"/>
         <activity
             android:name=".BookDetailActivity"
-            android:label="Dettaglio"
-            android:parentActivityName=".ResultsActivity" />
+            android:label="Dettaglio"/>
         <activity
             android:name=".ResultsActivity"
-            android:label="Risultati"
-            android:parentActivityName=".SearchActivity" />
+            android:label="Risultati"/>
         <activity
             android:name=".ConfigurationActivity"
-            android:label="Configurazione"
-            android:parentActivityName=".MainActivity" />
+            android:label="Configurazione"/>
         <activity
             android:name=".StatsActivity"
-            android:label="Statistiche"
-            android:parentActivityName=".MainActivity"/>
+            android:label="Statistiche"/>
     </application>
 
 </manifest>

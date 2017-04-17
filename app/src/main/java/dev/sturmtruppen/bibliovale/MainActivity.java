@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Attivare connessione ad internet", Toast.LENGTH_LONG).show();
             btnNewBook.setEnabled(false);
             btnSearch.setEnabled(false);
+            btnStats.setEnabled(false);
+            btnWishList.setEnabled(false);
         }
     }
 

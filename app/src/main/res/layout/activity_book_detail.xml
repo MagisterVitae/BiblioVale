@@ -198,5 +198,12 @@
             android:layout_height="match_parent"
             android:id="@+id/btnSave"
             android:layout_weight="0.62" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.62"
+            android:text="Elimina" />
     </LinearLayout>
 </ScrollView>

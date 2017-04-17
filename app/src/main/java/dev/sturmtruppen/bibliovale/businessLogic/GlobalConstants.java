@@ -12,6 +12,7 @@ public class GlobalConstants {
     public static final String DETAILS_CREATE = "DETAILS_CREATE";
     public static final String CONFIG_PREFS = "BIBLIOVALE_PREFERENCES";
     public static final String CONFIG_URL = "BIBLIOVALE_URL";
+    public static final String ACTIVITY_RESULTS_TITLE = "ACTIVITY_RESULTS_TITLE";
 
     public static String webSiteUrl = "";
 }

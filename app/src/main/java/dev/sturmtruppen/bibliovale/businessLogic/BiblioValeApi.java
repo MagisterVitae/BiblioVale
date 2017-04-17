@@ -20,7 +20,9 @@ public class BiblioValeApi {
 
     // Elenco API REST PHP esposte
     private enum F_NAMES {getBook, getAuthors, getIsbn, createBook, createAuthor,
-                            getGenreID, getStatusID, getAllGenres, getAllAuthors, updateBook, getWishList, getStats}
+                            getGenreID, getStatusID, getAllGenres, getAllAuthors,
+                            updateBook, getWishList, getStats, getBooksByStatus,
+                            deleteBook}
 
     public static String getBookList(String _surname, String _name, String _title){
         String jsonBookList = "";
@@ -254,4 +256,47 @@ public class BiblioValeApi {
 
         return jsonStatList;
     }
+
+    public static String getBooksByStatus(String _status){
+        String jsonBookList = "";
+
+        // Preparazione url per chiamata REST
+        String urlString = Uri.parse(URL).buildUpon()
+                .appendQueryParameter("fName", F_NAMES.getBooksByStatus.name())
+                .appendQueryParameter("status", _status.isEmpty() ? "" : _status)
+                .build().toString();
+
+        // Fetch book list
+        try {
+            jsonBookList = new BiblioValeDataFetcher().execute(urlString).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return jsonBookList;
+    }
+
+    public static String deleteBook(Book book){
+        String jsonResponse = "";
+
+        // Preparazione url per chiamata REST
+        String urlString = Uri.parse(URL).buildUpon()
+                .appendQueryParameter("fName", F_NAMES.deleteBook.name())
+                .appendQueryParameter("id", String.valueOf(book.getId()))
+                .build().toString();
+
+        // Fetch lista completa generi
+        try {
+            jsonResponse = new BiblioValeDataFetcher().execute(urlString).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return jsonResponse;
+    }
+
 }

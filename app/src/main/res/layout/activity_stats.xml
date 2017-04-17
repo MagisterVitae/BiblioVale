@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,10 +11,9 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSearch"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="14dp"
+        android:foregroundGravity="center_vertical|center_horizontal|center"
         android:translationZ="10dp" />
 
     <TableLayout
@@ -31,4 +30,4 @@
             android:gravity="center_vertical|fill_vertical|center_horizontal|fill_horizontal|center" />
 
     </TableLayout>
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

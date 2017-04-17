@@ -1,6 +1,7 @@
 package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
 
 import android.os.AsyncTask;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import dev.sturmtruppen.bibliovale.StatsActivity;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
 
 /**

@@ -31,6 +31,11 @@ public class ResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
+        //Assegnamento titolo
+        String title = this.getIntent().getStringExtra(GlobalConstants.ACTIVITY_RESULTS_TITLE);
+        if(title!= null && title!="")
+            this.setTitle(title);
+
         //Assegnamento handle oggetti visualizzati in activity
         activityBookList = (ListView) findViewById(R.id.lstBooks);
         progCircle = (ProgressBar) findViewById(R.id.resultsProgCir);

@@ -1,13 +1,20 @@
 package dev.sturmtruppen.bibliovale;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceGroup;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -18,16 +25,25 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import org.apache.commons.lang3.text.WordUtils;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
-public class StatsActivity extends AppCompatActivity {
+import static android.R.id.progress;
+
+public class StatsActivity extends AppCompatActivity implements View.OnClickListener{
     private TableLayout layStatsTable;
     private ProgressBar progCircle;
+    private TableRow selectedRow;
+
+    private Handler handler;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +59,43 @@ public class StatsActivity extends AppCompatActivity {
 
         //Visualizza risultati
         this.showResults();
+    }
+
+    @Override
+    public void onClick(View v) {
+        //Individuo l'oggetto cliccato
+        switch (v.getId()) {
+            default:
+                TableRow row = (TableRow) v;
+                TextView keyTextView = (TextView) row.getChildAt(0);
+                String status = keyTextView.getText().toString();
+                if (status.compareToIgnoreCase("TOTALE")!=0){
+                    selectedRow = row;
+                    v.setBackgroundResource(R.color.colorPrimaryDark);
+                    statusListLogic(status);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        progCircle.setVisibility(View.GONE);
+        if(selectedRow != null)
+            selectedRow.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    private void statusListLogic(String status) {
+        //Mostro progress circle
+        progCircle.setVisibility(View.VISIBLE);
+
+        String jsonBookList = BiblioValeApi.getBooksByStatus(status);
+
+        List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
+        putExtraList.add(new PutExtraPair(GlobalConstants.BOOKLIST_KEY, jsonBookList));
+        putExtraList.add(new PutExtraPair(GlobalConstants.ACTIVITY_RESULTS_TITLE, status));
+        ActivityFlowHelper.goToActivity(StatsActivity.this, ResultsActivity.class, putExtraList);
     }
 
     private void showResults(){
@@ -77,8 +130,12 @@ public class StatsActivity extends AppCompatActivity {
             // add the TextView  to the new TableRow
             row.addView(textKey);
             row.addView(textValue);
+            // set OnClickListener
+            row.setOnClickListener(StatsActivity.this);
             // add the TableRow to the TableLayout
             layStatsTable.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
         }
     }
+
+
 }

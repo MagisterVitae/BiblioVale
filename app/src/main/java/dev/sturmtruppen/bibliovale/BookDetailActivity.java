@@ -42,7 +42,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private ImageView imgThumbnail;
     private AutoCompleteTextView acTxtAuthor;
     private Spinner spinGenre, spinStatus;
-    private Button btnSave;
+    private Button btnSave, btnDelete;
     private LinearLayout linLayout;
 
     private String savedGenre;
@@ -70,6 +70,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         spinStatus = (Spinner) findViewById(R.id.spinStatus);
         acTxtAuthor = (AutoCompleteTextView) findViewById(R.id.acTxtAuthor);
         btnSave = (Button) findViewById(R.id.btnSave);
+        btnDelete = (Button) findViewById(R.id.btnDelete);
 
         //Adapter autocompletamento
         genresArray = fetchGenresArray();
@@ -107,6 +108,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         //Listener
         spinGenre.setOnItemSelectedListener(this);
         btnSave.setOnClickListener(this);
+        btnDelete.setOnClickListener(this);
         linLayout.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -154,10 +156,14 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     }
                 }
             }
+            case R.id.btnDelete:{
+                this.deleteBook(jsonBook);
+            }
             default:
                 break;
         }
     }
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -255,6 +261,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private void newBookFlavour(){
         Drawable bookCover = ContextCompat.getDrawable(this, R.drawable.cover_not_found);
         imgThumbnail.setImageDrawable(bookCover);
+        btnDelete.setEnabled(false);
     }
 
     private void updateBook(String jsonBook){
@@ -358,6 +365,36 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                             }
                             default: {
                                 acTxtAuthor.setText(savedAuthor);
+                                break;
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        acTxtAuthor.setText(savedAuthor);
+                    }
+                })
+                .show();
+    }
+
+    private void deleteBook(String jsonBook) {
+        final Book deletingBook = createBookFromActivity(jsonBook);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Attenzione")
+                .setMessage(String.format("Vuoi eliminare il libro \"%s\"?", deletingBook.getTitle()))
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        DBApiResponse response = JSONHelper.dbApiResponseDeserialize(BiblioValeApi.deleteBook(deletingBook));
+                        switch (response.getStatusId()) {
+                            case 0: {
+                                showToast("Eliminazione completata", Toast.LENGTH_SHORT);
+                                ActivityFlowHelper.goToActivity(BookDetailActivity.this, MainActivity.class); //Torna alla home
+                                break;
+                            }
+                            case 1: {
+                                new AlertDialog.Builder(BookDetailActivity.this).setTitle("Errore").setMessage("Errore durante l'eliminazione!").setNeutralButton("Chiudi", null).show();
                                 break;
                             }
                         }
