@@ -48,6 +48,22 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
         super.onPostExecute(result);
     }
 
+    public Book getBookSync(String[] params){
+        String isbn13 = params[0];
+        String isbn10 = params[1];
+        String title = params[2];
+        String autSurname = params[3];
+        String autName = params[4];
+        Book book;
+
+        book = this.searchByIsbn(isbn13);
+        if(book==null)
+            book = this.searchByIsbn(isbn10);
+        if(book==null)
+            book = this.searchByTitleAndAuthor(title, autSurname, autName);
+        return book;
+    }
+
     private Book searchByIsbn(String isbn){
         String completeUrl = baseUrl +
                 "isbn:" + isbn +

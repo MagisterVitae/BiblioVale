@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
 
 public class Book{
@@ -168,7 +169,12 @@ public class Book{
     public void setGenre(String _genreName) {
         //Recupero l'ID associato al genere e costruisco l'oggetto
         Genre genre = new Genre();
-        genre.setId(BiblioValeApi.getGenreID(_genreName));
+        //Leggo da hashmap, altrimenti chiamata a webapi
+        if (GlobalConstants.genresMap != null)
+            genre.setId(GlobalConstants.genresMap.getMap().get(_genreName));
+        else
+            genre.setId(BiblioValeApi.getGenreID(_genreName));
+
         if(genre.getId()<0)
             genre.setName("Not Found");
         else
@@ -178,6 +184,10 @@ public class Book{
     }
 
     public Drawable fetchThumbnail(){
+        return fetchThumbnail(false);
+    }
+
+    public Drawable fetchThumbnail(Boolean sync){
         Book book = null;
         String[] params = {this.isbn13, this.isbn10, this.title, this.authors.get(0).getSurname(), this.authors.get(0).getName()};
         /*
@@ -185,7 +195,10 @@ public class Book{
             return null;
         */
         try {
-            book = new GoogleBooksFetcher().execute(params).get();
+            if(sync)
+                book = new GoogleBooksFetcher().getBookSync(params);
+            else
+                book = new GoogleBooksFetcher().execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
             return null;
@@ -209,10 +222,14 @@ public class Book{
     private List<Author> fetchAuthors(String name, String surname) {
         List<Author> authorsList = new ArrayList<Author>();
 
+        Author author = new Author(name, surname);
+        authorsList.add(author);
+        /* TODO: gestione più autori per libro
         String jsonAuthors = BiblioValeApi.getAuthors(name, surname);
         if(TextUtils.isEmpty(jsonAuthors))
             return authorsList;
         authorsList = JSONHelper.authorsListDeserialize(jsonAuthors);
+        */
         return authorsList;
     }
 }

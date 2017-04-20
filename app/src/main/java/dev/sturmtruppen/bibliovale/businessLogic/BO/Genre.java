@@ -14,6 +14,11 @@ public class Genre {
     private String name;
 
     public Genre(){super();}
+    public Genre(int _id, String _name){
+        this.id = _id;
+        this.name = _name;
+    }
+
     public Genre(JSONObject _jsonBook){
         try {
             this.originalJson = _jsonBook.toString();

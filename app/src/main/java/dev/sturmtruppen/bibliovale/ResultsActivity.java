@@ -1,10 +1,12 @@
 package dev.sturmtruppen.bibliovale;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,6 +21,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
+import dev.sturmtruppen.bibliovale.presentationLogic.ResultsListAdapter;
 
 public class ResultsActivity extends AppCompatActivity {
     private ListView activityBookList;
@@ -43,7 +46,7 @@ public class ResultsActivity extends AppCompatActivity {
         activityBookList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String bookTitle = ((TextView)view).getText().toString();
+                String bookTitle = ((TextView)view.findViewById(R.id.txtRowTitle)).getText().toString();
 
                 String jsonBook = getSelectedBook(bookTitle).getOriginalJson();
 
@@ -67,17 +70,9 @@ public class ResultsActivity extends AppCompatActivity {
     private void showResults(){
         // Recupero lista di libri
         String jsonBookList = this.getIntent().getStringExtra(GlobalConstants.BOOKLIST_KEY);
-        // Conversione JSON in lista di libri
-        books = JSONHelper.bookListDeserialize(jsonBookList);
-
-        // Scrivo lista di libri su activity
-        final ArrayList <String> listp = new ArrayList<String>();
-        for (int i = 0; i < books.size(); ++i) {
-            listp.add(books.get(i).getTitle());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listp);
-        activityBookList.setAdapter(adapter);
+        // Deserializza in Asynctask e mostra sull'activity
+        DeserializeTask dTask = new DeserializeTask();
+        dTask.execute(jsonBookList);
     }
 
     @Nullable
@@ -92,13 +87,49 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
     private void openDetailsActivity(String jsonBook){
-        //Mostro progress circle
-        progCircle.setVisibility(View.VISIBLE);
-
         List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
         putExtraList.add(new PutExtraPair(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR, GlobalConstants.DETAILS_SHOW_UPDATE));
         putExtraList.add(new PutExtraPair(GlobalConstants.BOOK_KEY, jsonBook));
         ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
     }
+
+    private class DeserializeTask  extends AsyncTask<String, Void, List<Book>> {
+        @Override
+        protected List<Book> doInBackground(String... params) {
+            // Conversione JSON in lista di libri
+            String strBooks = params[0];
+            books = JSONHelper.bookListDeserialize(strBooks);
+            return books;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            progCircle.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void[] values) {
+
+        };
+
+        @Override
+        protected void onPostExecute(final List<Book> books) {
+            // Scrivo lista di libri su activity
+            super.onPostExecute(books);
+            final ArrayList <Book> bookList = new ArrayList<Book>();
+            for (int i = 0; i < books.size(); ++i) {
+                bookList.add(books.get(i));
+            }
+            activityBookList.setAdapter(new ResultsListAdapter(ResultsActivity.this, bookList));
+            progCircle.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onCancelled() {
+            //mAuthTask = null;
+        }
+    }
+
 
 }

@@ -2,6 +2,7 @@ package dev.sturmtruppen.bibliovale;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.presentationLogic.ResultsListAdapter;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -48,6 +50,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private String savedGenre;
     private String savedAuthor;
     private String jsonBook;
+
+    private Book currentBook;
 
     String[] genresArray;
     String[] authorsArray;
@@ -185,7 +189,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         String jsonGenres = BiblioValeApi.getAllGenres();
         if(TextUtils.isEmpty(jsonGenres))
             return new String[]{""};
-        genresList = JSONHelper.genresListDeserialize(jsonGenres);
+        genresList = GlobalConstants.genresMap.getGenresList();
         String[] genresArray = new String[genresList.size()];
         for (int i=0; i<genresList.size(); i++)
             genresArray[i] = genresList.get(i).getName();
@@ -195,11 +199,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     private String[] fetchAuthorsArray() {
         List<Author> authorsList = new ArrayList<Author>();
-
-        String jsonAuthors = BiblioValeApi.getAllAuthors();
-        if(TextUtils.isEmpty(jsonAuthors))
+        authorsList = GlobalConstants.authorsMap.getAuthorsList();
+        if(authorsList.size() < 1)
             return new String[]{""};
-        authorsList = JSONHelper.authorsListDeserialize(jsonAuthors);
         String[] authorsArray = new String[authorsList.size()];
         for (int i=0; i<authorsList.size(); i++)
             authorsArray[i] = authorsList.get(i).getSurname() + ", " + authorsList.get(i).getName();
@@ -230,6 +232,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void showBookFlavour(String jsonBook){
+
         Book book = JSONHelper.bookDeserialize(jsonBook);
         List<Author> authorsList = book.getAuthors();
         Drawable bookCover = null;
@@ -252,10 +255,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         this.savedGenre = book.getGenre().getName();
         this.savedAuthor = authors;
 
-        bookCover = book.fetchThumbnail();
-        if(bookCover == null)
-            bookCover = ContextCompat.getDrawable(this, R.drawable.cover_not_found);
-        imgThumbnail.setImageDrawable(bookCover);
+        ThumbnailTask thumbTask = new ThumbnailTask();
+        thumbTask.execute(book);
+
     }
 
     private void newBookFlavour(){
@@ -357,6 +359,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                         DBApiResponse response = JSONHelper.dbApiResponseDeserialize(BiblioValeApi.createAuthor(surname, name));
                         switch (response.getStatusId()){
                             case 0: {
+                                GlobalConstants.authorsMap.addAuthor(new Author(name, surname));
                                 authorsArray = fetchAuthorsArray();
                                 acTxtAuthor.setText(strNewAuth);
                                 savedAuthor = strNewAuth.toString();
@@ -418,4 +421,93 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         Toast.makeText(this, msg, len).show();
     }
 
+    private class DeserializeTask  extends AsyncTask<String, Void, Book> {
+        @Override
+        protected Book doInBackground(String... params) {
+            // Conversione JSON in lista di libri
+            String strBook = params[0];
+            currentBook = JSONHelper.bookDeserialize(jsonBook);
+            return currentBook;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            //TODO: progCircle.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void[] values) {
+
+        };
+
+        @Override
+        protected void onPostExecute(final Book book) {
+            // Scrivo dettagli del libro su activity
+            super.onPostExecute(book);
+
+            List<Author> authorsList = book.getAuthors();
+            Drawable bookCover = null;
+            String authors = "";
+
+            //AUTORE SINGOLO
+            for (Author aut : authorsList){
+                authors += aut.getSurname() + ", " + aut.getName() + "\n";
+            }
+
+            txtTitle.setText(book.getTitle());
+            acTxtAuthor.setText(authors);
+            txtYear.setText(book.getYear());
+            txtIsbn10.setText(book.getIsbn10());
+            txtIsbn13.setText(book.getIsbn13());
+            txtNotes.setText(book.getNotes());
+
+            setGenreSpinnerText(book.getGenre().getName());
+            setStatusSpinnerText(book.getStatus());
+            savedGenre = book.getGenre().getName();
+            savedAuthor = authors;
+            //TODO: progCircle.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onCancelled() {
+            //mAuthTask = null;
+        }
+    }
+
+    private class ThumbnailTask  extends AsyncTask<Book, Void, Drawable> {
+        @Override
+        protected Drawable doInBackground(Book... params) {
+            // Fetch book cover
+            Book book = params[0];
+            Drawable bookCover = book.fetchThumbnail(true);
+            if(bookCover == null)
+                bookCover = ContextCompat.getDrawable(BookDetailActivity.this, R.drawable.cover_not_found);
+            return bookCover;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            //TODO: progCircle.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void[] values) {
+
+        };
+
+        @Override
+        protected void onPostExecute(final Drawable bookCover) {
+            // Scrivo lista di libri su activity
+            super.onPostExecute(bookCover);
+            imgThumbnail.setImageDrawable(bookCover);
+            //TODO: progCircle.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onCancelled() {
+            //mAuthTask = null;
+        }
+    }
 }

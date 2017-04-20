@@ -28,4 +28,13 @@ public class BiblioValeDataFetcher extends AsyncTask<String, String, String> {
 
         return json;
     }
+
+    public String getDataSync(String... params){
+        String json = "";
+        String urlString = params[0];
+
+        json = HttpConnectionHelper.getJsonData(urlString);
+
+        return json;
+    }
 }

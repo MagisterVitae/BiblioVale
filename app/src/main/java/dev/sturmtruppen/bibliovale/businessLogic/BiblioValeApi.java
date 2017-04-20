@@ -48,6 +48,10 @@ public class BiblioValeApi {
     }
 
     public static String getAllGenres(){
+        return getAllGenres(false);
+    }
+
+    public static String getAllGenres(Boolean sync){
         String jsonGenresList = "";
 
         // Preparazione url per chiamata REST
@@ -57,7 +61,10 @@ public class BiblioValeApi {
 
         // Fetch lista completa generi
         try {
-            jsonGenresList = new BiblioValeDataFetcher().execute(urlString).get();
+            if(sync)
+                jsonGenresList = new BiblioValeDataFetcher().getDataSync(urlString);
+            else
+                jsonGenresList = new BiblioValeDataFetcher().execute(urlString).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -93,6 +100,10 @@ public class BiblioValeApi {
     }
 
     public static String getAllAuthors(){
+        return getAllAuthors(false);
+    }
+
+    public static String getAllAuthors(Boolean sync){
         String jsonAuthorsList = "";
 
         // Preparazione url per chiamata REST
@@ -102,7 +113,10 @@ public class BiblioValeApi {
 
         // Fetch lista completa generi
         try {
-            jsonAuthorsList = new BiblioValeDataFetcher().execute(urlString).get();
+            if(sync)
+                jsonAuthorsList = new BiblioValeDataFetcher().getDataSync(urlString);
+            else
+                jsonAuthorsList = new BiblioValeDataFetcher().execute(urlString).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
