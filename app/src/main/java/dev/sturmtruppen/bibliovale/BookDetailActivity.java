@@ -63,6 +63,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     private Book currentBook;
 
+    private Boolean authorCreated = false;
+
     String[] genresArray;
     String[] authorsArray;
 
@@ -229,6 +231,19 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
             return 2;
         return 0;
+    }
+
+    private Boolean checkAuthorExists(Book _book){
+        String jsonAuthorsList = "";
+        Book currentBook;
+        if(_book == null)
+            currentBook = createBookFromActivity("");
+        else
+            currentBook = _book;
+        jsonAuthorsList = BiblioValeApi.getAuthors(currentBook.getAuthors().get(0).getName(),currentBook.getAuthors().get(0).getSurname());
+        if(JSONHelper.authorsListDeserialize(jsonAuthorsList).size() == 0)
+            return false;
+        return true;
     }
 
     @Override
@@ -431,10 +446,16 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     private void createBook(){
         Book newBook = createBookFromActivity("");
+        if(!checkAuthorExists(newBook)){
+            createNewAuthor(String.format("%s, %s", newBook.getAuthors().get(0).getSurname(), newBook.getAuthors().get(0).getName()));
+            if(!authorCreated){
+                return;
+            }
+        }
         DBApiResponse response = JSONHelper.dbApiResponseDeserialize(BiblioValeApi.createBook(newBook));
         switch (response.getStatusId()){
             case 0: {
-                Toast.makeText(this, "Salvataggio completato", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Salvataggio completato", Toast.LENGTH_LONG).show();
                 ActivityFlowHelper.goToActivity(this, MainActivity.class); //Torna alla home
                 break;
             }
@@ -498,10 +519,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                                 authorsArray = fetchAuthorsArray();
                                 acTxtAuthor.setText(strNewAuth);
                                 savedAuthor = strNewAuth.toString();
+                                authorCreated = true;
                                 showToast(String.format("Autore \"%s\" creato con successo", savedAuthor), Toast.LENGTH_SHORT);
                                 break;
                             }
                             default: {
+                                authorCreated = false;
                                 acTxtAuthor.setText(savedAuthor);
                                 break;
                             }
@@ -510,6 +533,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 })
                 .setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        authorCreated = false;
                         acTxtAuthor.setText(savedAuthor);
                     }
                 })
