@@ -1,13 +1,19 @@
 package dev.sturmtruppen.bibliovale;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,21 +28,25 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.DialogInterface;
 
-import com.google.zxing.common.StringUtils;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
-import dev.sturmtruppen.bibliovale.presentationLogic.ResultsListAdapter;
+
+import me.sudar.zxingorient.ZxingOrient;
+import me.sudar.zxingorient.ZxingOrientResult;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -148,26 +158,78 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 this.acTxtAuthor.showDropDown();
                 break;
             }
-            case R.id.btnSave:{
-                switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)) {
-                    case GlobalConstants.DETAILS_SHOW_UPDATE: {
-                        this.updateBook(jsonBook);
+            case R.id.btnSave: {
+                btnSaveLogic();
+                break;
+            }
+            case R.id.btnDelete:{
+                this.deleteBook(jsonBook);
+                break;
+        }
+        default:
+            break;
+        }
+    }
+
+    private void btnSaveLogic(){
+        switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)) {
+            case GlobalConstants.DETAILS_SHOW_UPDATE: {
+                this.updateBook(jsonBook);
+                break;
+            }
+            case GlobalConstants.DETAILS_CREATE: {
+                switch (this.checkBookExists()){
+                    case 0:{
+                        // Libro non posseduto
+                        this.createBook();
                         break;
                     }
-                    case GlobalConstants.DETAILS_CREATE: {
-                        this.createBook();
+                    case 1:{
+                        // Libro posseduto
+                        new AlertDialog.Builder(this).setTitle("Attenzione").setMessage("Possiedi già questo libro").setNeutralButton("Chiudi", null).show();
+                        break;
+                    }
+                    case 2:{
+                        // Libro posseduto in altra edizione
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("Attenzione")
+                                .setMessage("Possiedi già questo libro in un'altra edizione, vuoi aggiungerlo?")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        createBook();
+                                    }
+                                })
+                                .setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                                .show();
                         break;
                     }
                 }
             }
-            case R.id.btnDelete:{
-                this.deleteBook(jsonBook);
-            }
-            default:
-                break;
         }
     }
 
+
+    private int checkBookExists(){
+        String jsonBookList = "";
+        Book bookToSearch = createBookFromActivity("");
+        // Cerca per ISBN13
+        jsonBookList = BiblioValeApi.getBook("","","",bookToSearch.getIsbn10(),"");
+        List<Book> f = JSONHelper.bookListDeserialize(jsonBookList);
+        if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
+            return 1;
+        // Cerca per ISBN10
+        jsonBookList = BiblioValeApi.getBook("","","","",bookToSearch.getIsbn13());
+        if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
+            return 1;
+        // Cerca per Autore-Titolo
+        jsonBookList = BiblioValeApi.getBook(bookToSearch.getAuthors().get(0).getSurname(),bookToSearch.getAuthors().get(0).getName(), bookToSearch.getTitle(), "", "");
+        if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
+            return 2;
+        return 0;
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -181,6 +243,79 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)) {
+            case GlobalConstants.DETAILS_CREATE: {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.book_detail_menu, menu);
+                break;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_barcode:
+                scanBarcode();
+                break;
+        }
+        return true;
+    }
+
+    private void scanBarcode(){
+        ZxingOrient integrator = new ZxingOrient(this);
+        integrator.setIcon(R.mipmap.ic_action_barcode)
+                .setInfo("Inquadra il barcode")
+                .setBeep(true)
+                .showInfoBox(false)
+                .initiateScan();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        //retrieve scan result
+        ZxingOrientResult scanResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
+        if(scanResult != null) {
+            if(scanResult.getContents() == null) {
+                Toast.makeText(this, "Scansione cancellata", Toast.LENGTH_SHORT).show();
+            } else {
+                this.currentBook = this.fetchBook(scanResult.getContents());
+                if(currentBook == null){
+                    Toast.makeText(this, "Nessun libro trovato", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(currentBook.getGenre() == null)
+                    currentBook.setGenre("Romanzo");
+                if(currentBook.getStatus() == null || currentBook.getStatus().isEmpty())
+                    currentBook.setStatus("Non Letto");
+                if(currentBook.getNotes() == null || currentBook.getNotes().isEmpty())
+                    currentBook.setNotes("");
+                String jsonBook = this.currentBook.jsonSerialize();
+                this.showBookFlavour(jsonBook);
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, intent);
+        }
+
+    }
+
+    private Book fetchBook(String barcode){
+        Book book = null;
+        try {
+            String[] params = {barcode, barcode, "", "", ""};
+            book = new GoogleBooksFetcher().execute(params).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return book;
     }
 
     private String[] fetchGenresArray() {
@@ -510,4 +645,5 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             //mAuthTask = null;
         }
     }
+
 }

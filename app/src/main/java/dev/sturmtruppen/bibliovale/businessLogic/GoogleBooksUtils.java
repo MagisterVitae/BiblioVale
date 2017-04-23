@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 
 public final class GoogleBooksUtils{
@@ -40,9 +43,17 @@ public final class GoogleBooksUtils{
             book.setThumbnailUrl(thumbnailUrl);
             book.setTotalItems(totItems);
             if (authorsNode.isArray()) {
+                JsonNode autNode = authorsNode.get(0);
+                String name = autNode.asText().split(" ")[0];
+                String surname = autNode.asText().substring(name.length() +1 );
+                Author author = new Author(name, surname);
+                List<Author> authorList = new ArrayList<Author>();
+                authorList.add(author);
+                book.setAuthors(authorList);
+                /*
                 for (final JsonNode objNode : authorsNode) {
                     //book.setAuthor(objNode.asText()); //// TODO: 27/11/2016 CORREGGERE CON OGGETTO AUTHORS
-                }
+                }*/
             }
             if (isbnNode.isArray()){
                 for (final JsonNode objNode : isbnNode){

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,21 +18,31 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.common.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.AuthorsMap;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.GenresMap;
+import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 
 
 public class BarcodeScanActivity extends AppCompatActivity implements View.OnClickListener{
 
+
     private Button btnScan, btnTestBcode, btnSearch;
     private EditText txtBarcode, txtTitle, txtAuthors, txtYear;
     private ImageView imgThumbnail;
+
+    private String barcode;
+    private Book book;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -46,6 +57,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+
         //Assegnamento handle oggetti visualizzati in activity
         btnScan = (Button) findViewById(R.id.btnScan);
         btnTestBcode = (Button) findViewById(R.id.btnTestBcode);
@@ -59,6 +71,12 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         btnScan.setOnClickListener(this);
         btnTestBcode.setOnClickListener(this);
         btnSearch.setOnClickListener(this);
+
+        //BACKGROUND
+        this.scanBarcode();
+        //if(barcode != null && !barcode.isEmpty())
+            //book = this.fetchBook();
+
     }
 
     @Override
@@ -67,7 +85,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
+       // client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "BarcodeScan Page", // TODO: Define a title for the content shown.
@@ -79,6 +97,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
                 Uri.parse("android-app://dev.sturmtruppen.bibliovale/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+        //this.scanBarcode();
     }
 
     @Override
@@ -107,10 +126,7 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         switch (view.getId()){
             case R.id.btnScan:
             {
-                IntentIntegrator integrator = new IntentIntegrator((Activity)this);
-                integrator.setBarcodeImageEnabled(true);
-                integrator.setBeepEnabled(true);
-                integrator.initiateScan(IntentIntegrator.ONE_D_CODE_TYPES);
+                scanBarcode();
                 break;
             }
             case R.id.btnTestBcode:
@@ -129,22 +145,72 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private void scanBarcode(){
+        /*
+        IntentIntegrator integrator = new IntentIntegrator((Activity)this);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.setBeepEnabled(true);
+        integrator.initiateScan(IntentIntegrator.ONE_D_CODE_TYPES);
+        */
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        /*
         //retrieve scan result
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanResult != null) {
             if(scanResult.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                txtBarcode.setText(scanResult.getContents());
+                //txtBarcode.setText(scanResult.getContents());
                 //this.testFetch(scanResult.getContents());
+                this.book = this.fetchBook(scanResult.getContents());
+                if(book.getGenre() == null)
+                    book.setGenre("Romanzo");
+                if(book.getStatus() == null || book.getStatus().isEmpty())
+                    book.setStatus("Non Letto");
+                if(book.getNotes() == null || book.getNotes().isEmpty())
+                    book.setNotes("");
+                String jsonBook = this.book.jsonSerialize();
+                /*
+                List<PutExtraPair> putExtraList = new ArrayList<PutExtraPair>();
+                putExtraList.add(new PutExtraPair(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR, GlobalConstants.DETAILS_SHOW_UPDATE));
+                putExtraList.add(new PutExtraPair(GlobalConstants.BOOK_KEY, jsonBook));
+                ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
+                *
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra(GlobalConstants.BOOK_KEY, jsonBook);
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, intent);
         }
-
+*/
     }
+
+    private boolean checkConnectivity(Context context){
+        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected())
+            return true;
+        return false;
+    }
+
+    private Book fetchBook(String barcode){
+        Book book = null;
+        try {
+            String[] params = {barcode, barcode, "", "", ""};
+            book = new GoogleBooksFetcher().execute(params).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
     /*
     private void testFetch(String barcode) {
         if(checkConnectivity(this)){
@@ -174,12 +240,28 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
 
     }
     */
-    private boolean checkConnectivity(Context context){
-        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isConnected())
-            return true;
-        return false;
+
+    /*
+    private class FetchBookTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String[] googlePars = {params[0], params[0], "", "" , ""};
+            String
+        }
+
+        @Override
+        protected void onPreExecute(){
+        }
+
+        @Override
+        protected void onProgressUpdate(Void[] values) {
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+        }
     }
+    */
 }
 

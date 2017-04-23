@@ -64,12 +64,38 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
         return book;
     }
 
+    public String getJsonBookSync(String[] params){
+        String isbn13 = params[0];
+        String isbn10 = params[1];
+        String title = params[2];
+        String autSurname = params[3];
+        String autName = params[4];
+        String jsonBook = "";
+
+        jsonBook = this.jsonSearchByIsbn(isbn13);
+        if(jsonBook.isEmpty())
+            jsonBook = this.jsonSearchByIsbn(isbn10);
+        if(jsonBook.isEmpty())
+            jsonBook = this.jsonSearchByTitleAndAuthor(title, autSurname, autName);
+        return jsonBook;
+    }
+
     private Book searchByIsbn(String isbn){
         String completeUrl = baseUrl +
                 "isbn:" + isbn +
                 "&key=" + googleKey;
         if(!isbn.isEmpty())
             return bookSearcher(completeUrl);
+        else
+            return null;
+    }
+
+    private String jsonSearchByIsbn(String isbn){
+        String completeUrl = baseUrl +
+                "isbn:" + isbn +
+                "&key=" + googleKey;
+        if(!isbn.isEmpty())
+            return jsonBookSearcher(completeUrl);
         else
             return null;
     }
@@ -83,6 +109,17 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
             return bookSearcher(completeUrl);
         else
             return null;
+    }
+
+    private String jsonSearchByTitleAndAuthor(String title, String autSurname, String autName) {
+        String completeUrl = baseUrl +
+                "title:" + title.replace(" ", "%20") +
+                "&author:" + autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20") +
+                "&key=" + googleKey;
+        if(!title.isEmpty() && !autSurname.isEmpty() && !autName.isEmpty())
+            return jsonBookSearcher(completeUrl);
+        else
+            return "";
     }
 
     private Book bookSearcher(String completeUrl){
@@ -146,5 +183,55 @@ public class GoogleBooksFetcher extends AsyncTask<String, String, Book> {
         return null;
     }
 
+    private String jsonBookSearcher(String completeUrl){
+        String json = "";
+        HttpURLConnection conn = null;
+        BufferedReader br = null;
+        InputStream is = null;
+        try {
+            URL url = new URL(completeUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.connect();
 
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
+
+            br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            while ((output = br.readLine()) != null) {
+                //System.out.println(output);
+                json = json + output;
+            }
+
+            return json;
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(is != null)
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            if(conn != null)
+                conn.disconnect();
+            if(br != null)
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return "";
+    }
 }

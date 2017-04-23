@@ -53,6 +53,27 @@ public final class JSONHelper {
         return book;
     }
 
+    public static String bookSerialize(Book book){
+        JSONObject jsonBook = new JSONObject();
+
+        try {
+            jsonBook.put("id", book.getId());
+            jsonBook.put("title", book.getTitle());
+            jsonBook.put("surname", book.getAuthors().get(0).getSurname());
+            jsonBook.put("name", book.getAuthors().get(0).getName());
+            jsonBook.put("year", book.getYear());
+            jsonBook.put("genre", book.getGenre().getName());
+            jsonBook.put("isbn_10", book.getIsbn10());
+            jsonBook.put("isbn_13", book.getIsbn13());
+            jsonBook.put("status", book.getStatus());
+            jsonBook.put("notes", book.getNotes());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonBook.toString();
+    }
+
     public static List<Genre> genresListDeserialize(String jsonList){
         List<Genre> genres = new ArrayList<Genre>();
 

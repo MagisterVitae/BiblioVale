@@ -47,6 +47,31 @@ public class BiblioValeApi {
         return jsonBookList;
     }
 
+    public static String getBook(String _surname, String _name, String _title, String _isbn10, String _isbn13){
+        String jsonBookList = "";
+
+        // Preparazione url per chiamata REST
+        String urlString = Uri.parse(URL).buildUpon()
+                .appendQueryParameter("fName", F_NAMES.getBook.name())
+                .appendQueryParameter("surname", _surname.isEmpty() ? "" : _surname)
+                .appendQueryParameter("name", _name.isEmpty() ? "" : _name)
+                .appendQueryParameter("title", _title.isEmpty() ? "" : _title)
+                .appendQueryParameter("isbn_10", _isbn10.isEmpty() ? "" : _isbn10)
+                .appendQueryParameter("isbn_13", _isbn13.isEmpty() ? "" : _isbn13)
+                .build().toString();
+
+        // Fetch book list
+        try {
+            jsonBookList = new BiblioValeDataFetcher().execute(urlString).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return jsonBookList;
+    }
+
     public static String getAllGenres(){
         return getAllGenres(false);
     }

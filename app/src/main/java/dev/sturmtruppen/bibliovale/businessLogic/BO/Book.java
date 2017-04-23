@@ -219,6 +219,10 @@ public class Book{
         this.notes = notes;
     }
 
+    public String jsonSerialize(){
+        return JSONHelper.bookSerialize(this);
+    }
+
     private List<Author> fetchAuthors(String name, String surname) {
         List<Author> authorsList = new ArrayList<Author>();
 
