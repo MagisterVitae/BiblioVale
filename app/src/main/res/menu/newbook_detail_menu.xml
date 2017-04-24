@@ -7,9 +7,9 @@
         android:icon="@mipmap/ic_action_floppy"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_delete"
-        android:title="action_delete"
-        android:icon="@mipmap/ic_action_bin"
+        android:id="@+id/action_barcode"
+        android:title="action_barcode"
+        android:icon="@mipmap/ic_action_barcode"
         app:showAsAction="ifRoom"/>
 
 </menu>

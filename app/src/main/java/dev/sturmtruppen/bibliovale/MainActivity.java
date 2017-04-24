@@ -63,6 +63,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progCircle.setVisibility(View.GONE);
     }
 
+
+    @Override
+    public void onBackPressed()
+    {
+        this.finishAffinity();
+        this.finish();
+        this.moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
+    }
+
     private boolean checkConnectivity() {
         if (!HttpConnectionHelper.checkConnectivity(this)) {
             Toast.makeText(this, "Attivare connessione ad internet", Toast.LENGTH_LONG).show();

@@ -29,29 +29,35 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SearchActivity"
+            android:launchMode="singleTask"
             android:label="Ricerca"/>
         <activity
             android:name=".BookDetailActivity"
             android:label="Dettaglio"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".ResultsActivity"
+            android:launchMode="singleTask"
             android:label="Risultati"/>
         <activity
             android:name=".ConfigurationActivity"
+            android:launchMode="singleTask"
             android:label="Configurazione"/>
         <activity
             android:name=".StatsActivity"
+            android:launchMode="singleTask"
             android:label="Statistiche"/>
     </application>
 

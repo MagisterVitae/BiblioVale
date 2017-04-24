@@ -1,10 +1,8 @@
 package dev.sturmtruppen.bibliovale;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,8 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.DialogInterface;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +50,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private ImageView imgThumbnail;
     private AutoCompleteTextView acTxtAuthor;
     private Spinner spinGenre, spinStatus;
-    private Button btnSave, btnDelete;
     private LinearLayout linLayout;
 
     private String savedGenre;
@@ -85,8 +80,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         spinGenre = (Spinner) findViewById(R.id.spinGenre);
         spinStatus = (Spinner) findViewById(R.id.spinStatus);
         acTxtAuthor = (AutoCompleteTextView) findViewById(R.id.acTxtAuthor);
-        btnSave = (Button) findViewById(R.id.btnSave);
-        btnDelete = (Button) findViewById(R.id.btnDelete);
 
         //Adapter autocompletamento
         genresArray = fetchGenresArray();
@@ -123,8 +116,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
         //Listener
         spinGenre.setOnItemSelectedListener(this);
-        btnSave.setOnClickListener(this);
-        btnDelete.setOnClickListener(this);
         linLayout.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -160,17 +151,98 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 this.acTxtAuthor.showDropDown();
                 break;
             }
-            case R.id.btnSave: {
-                btnSaveLogic();
-                break;
-            }
-            case R.id.btnDelete:{
-                this.deleteBook(jsonBook);
-                break;
-        }
         default:
             break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (view.getId()){
+            case R.id.spinGenre:{
+                //this.spinGenre.sett parent.getItemAtPosition(position).toString();
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)) {
+            case GlobalConstants.DETAILS_CREATE: {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.newbook_detail_menu, menu);
+                break;
+            }
+            case GlobalConstants.DETAILS_SHOW_UPDATE: {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.book_detail_menu, menu);
+                break;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_barcode:
+                scanBarcode();
+                break;
+            case R.id.action_save: {
+                btnSaveLogic();
+                break;
+            }
+            case R.id.action_delete: {
+                this.deleteBook(jsonBook);
+                break;
+            }
+            default:
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        //retrieve scan result
+        ZxingOrientResult scanResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
+        if(scanResult != null) {
+            if(scanResult.getContents() == null) {
+                Toast.makeText(this, "Scansione cancellata", Toast.LENGTH_SHORT).show();
+            } else {
+                this.currentBook = this.fetchBook(scanResult.getContents());
+                if(currentBook == null){
+                    Toast.makeText(this, "Nessun libro trovato", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(currentBook.getGenre() == null)
+                    currentBook.setGenre("Romanzo");
+                if(currentBook.getStatus() == null || currentBook.getStatus().isEmpty())
+                    currentBook.setStatus("Non Letto");
+                if(currentBook.getNotes() == null || currentBook.getNotes().isEmpty())
+                    currentBook.setNotes("");
+                String jsonBook = this.currentBook.jsonSerialize();
+                this.showBookFlavour(jsonBook);
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, intent);
+        }
+
+    }
+
+    private void scanBarcode(){
+        ZxingOrient integrator = new ZxingOrient(this);
+        integrator.setIcon(R.mipmap.ic_action_barcode)
+                .setInfo("Inquadra il barcode")
+                .setBeep(true)
+                .showInfoBox(false)
+                .initiateScan();
     }
 
     private void btnSaveLogic(){
@@ -213,17 +285,16 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-
     private int checkBookExists(){
         String jsonBookList = "";
         Book bookToSearch = createBookFromActivity("");
         // Cerca per ISBN13
-        jsonBookList = BiblioValeApi.getBook("","","",bookToSearch.getIsbn10(),"");
+        jsonBookList = BiblioValeApi.getBookByISBN("",bookToSearch.getIsbn13());
         List<Book> f = JSONHelper.bookListDeserialize(jsonBookList);
         if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
             return 1;
         // Cerca per ISBN10
-        jsonBookList = BiblioValeApi.getBook("","","","",bookToSearch.getIsbn13());
+        jsonBookList = BiblioValeApi.getBookByISBN(bookToSearch.getIsbn10(),"");
         if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
             return 1;
         // Cerca per Autore-Titolo
@@ -244,80 +315,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         if(JSONHelper.authorsListDeserialize(jsonAuthorsList).size() == 0)
             return false;
         return true;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (view.getId()){
-            case R.id.spinGenre:{
-                //this.spinGenre.sett parent.getItemAtPosition(position).toString();
-            }
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)) {
-            case GlobalConstants.DETAILS_CREATE: {
-                MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.book_detail_menu, menu);
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_barcode:
-                scanBarcode();
-                break;
-        }
-        return true;
-    }
-
-    private void scanBarcode(){
-        ZxingOrient integrator = new ZxingOrient(this);
-        integrator.setIcon(R.mipmap.ic_action_barcode)
-                .setInfo("Inquadra il barcode")
-                .setBeep(true)
-                .showInfoBox(false)
-                .initiateScan();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        //retrieve scan result
-        ZxingOrientResult scanResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
-        if(scanResult != null) {
-            if(scanResult.getContents() == null) {
-                Toast.makeText(this, "Scansione cancellata", Toast.LENGTH_SHORT).show();
-            } else {
-                this.currentBook = this.fetchBook(scanResult.getContents());
-                if(currentBook == null){
-                    Toast.makeText(this, "Nessun libro trovato", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(currentBook.getGenre() == null)
-                    currentBook.setGenre("Romanzo");
-                if(currentBook.getStatus() == null || currentBook.getStatus().isEmpty())
-                    currentBook.setStatus("Non Letto");
-                if(currentBook.getNotes() == null || currentBook.getNotes().isEmpty())
-                    currentBook.setNotes("");
-                String jsonBook = this.currentBook.jsonSerialize();
-                this.showBookFlavour(jsonBook);
-            }
-        } else {
-            // This is important, otherwise the result will not be passed to the fragment
-            super.onActivityResult(requestCode, resultCode, intent);
-        }
-
     }
 
     private Book fetchBook(String barcode){
@@ -413,7 +410,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private void newBookFlavour(){
         Drawable bookCover = ContextCompat.getDrawable(this, R.drawable.cover_not_found);
         imgThumbnail.setImageDrawable(bookCover);
-        btnDelete.setEnabled(false);
     }
 
     private void updateBook(String jsonBook){
@@ -421,8 +417,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         DBApiResponse response = JSONHelper.dbApiResponseDeserialize(BiblioValeApi.updateBook(modifiedBook));
         switch (response.getStatusId()){
             case 0: {
-                Toast.makeText(this, "Salvataggio completato", Toast.LENGTH_SHORT).show();
-                ActivityFlowHelper.goToActivity(this, MainActivity.class); //Torna alla home
+                Toast.makeText(this, "Salvataggio completato", Toast.LENGTH_SHORT).show();List<Integer> activityFlags = new ArrayList<>();
+                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activityFlags.add(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                ActivityFlowHelper.goToActivity(this, MainActivity.class, null, activityFlags); //Torna alla home
+                finish();
                 break;
             }
             case 1:{
@@ -456,7 +456,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         switch (response.getStatusId()){
             case 0: {
                 Toast.makeText(this, "Salvataggio completato", Toast.LENGTH_LONG).show();
-                ActivityFlowHelper.goToActivity(this, MainActivity.class); //Torna alla home
+                List<Integer> activityFlags = new ArrayList<>();
+                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activityFlags.add(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                ActivityFlowHelper.goToActivity(this, MainActivity.class, null, activityFlags); //Torna alla home
+                finish();
                 break;
             }
             case 1:{
@@ -551,8 +556,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                         DBApiResponse response = JSONHelper.dbApiResponseDeserialize(BiblioValeApi.deleteBook(deletingBook));
                         switch (response.getStatusId()) {
                             case 0: {
-                                showToast("Eliminazione completata", Toast.LENGTH_SHORT);
-                                ActivityFlowHelper.goToActivity(BookDetailActivity.this, MainActivity.class); //Torna alla home
+                                showToast("Eliminazione completata", Toast.LENGTH_SHORT);List<Integer> activityFlags = new ArrayList<>();
+                                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                activityFlags.add(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                activityFlags.add(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                ActivityFlowHelper.goToActivity(BookDetailActivity.this, MainActivity.class, null, activityFlags); //Torna alla home
+                                finish();
                                 break;
                             }
                             case 1: {

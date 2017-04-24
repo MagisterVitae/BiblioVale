@@ -44,9 +44,15 @@ public final class GoogleBooksUtils{
             book.setTotalItems(totItems);
             if (authorsNode.isArray()) {
                 JsonNode autNode = authorsNode.get(0);
-                String name = autNode.asText().split(" ")[0];
-                String surname = autNode.asText().substring(name.length() +1 );
-                Author author = new Author(name, surname);
+                Author author;
+                try{
+                    String name = autNode.asText().split(" ")[0];
+                    String surname = autNode.asText().substring(name.length() +1 );
+                    author = new Author(name, surname);
+                }catch (Exception e){
+                    //Impossibile splittare l'autore in nome e cognome
+                    author = new Author(autNode.asText(), autNode.asText());
+                }
                 List<Author> authorList = new ArrayList<Author>();
                 authorList.add(author);
                 book.setAuthors(authorList);

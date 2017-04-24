@@ -29,8 +29,29 @@ public final class ActivityFlowHelper {
         // definisco l'intent
         Intent nextActivity = new Intent(context, destinationClass);
         // aggiungo i parametri putExtra
-        for (PutExtraPair pair : putExtraList) {
-            nextActivity.putExtra(pair.getKey(), (Serializable)pair.getValue());
+        if(putExtraList != null) {
+            for (PutExtraPair pair : putExtraList) {
+                nextActivity.putExtra(pair.getKey(), (Serializable) pair.getValue());
+            }
+        }
+        // passo all'attivazione dell'activity
+        context.startActivity(nextActivity);
+    }
+
+    public static void goToActivity(Context context, Class destinationClass, List<PutExtraPair> putExtraList, List<Integer> flags){
+        // definisco l'intent
+        Intent nextActivity = new Intent(context, destinationClass);
+        // aggiungo i parametri putExtra
+        if(putExtraList != null) {
+            for (PutExtraPair pair : putExtraList) {
+                nextActivity.putExtra(pair.getKey(), (Serializable) pair.getValue());
+            }
+        }
+        // aggiungo i flag
+        if(flags != null) {
+            for (Integer flag : flags) {
+                nextActivity.addFlags(flag);
+            }
         }
         // passo all'attivazione dell'activity
         context.startActivity(nextActivity);
