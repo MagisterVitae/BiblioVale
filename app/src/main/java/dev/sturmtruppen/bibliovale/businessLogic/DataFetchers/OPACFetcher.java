@@ -1,10 +1,7 @@
 package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.text.TextUtils;
-import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,17 +12,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.GoogleBooksUtils;
+import dev.sturmtruppen.bibliovale.businessLogic.OPACUtils;
 
 /**
- * Created by sturmtruppen on 30/04/16.
+ * Created by Matteo on 24/04/2017.
  */
-public class GoogleBooksFetcher implements IBookRepositoryFetcher {
 
-    private static final String googleKey = "AIzaSyAsz4PRSi2OIlRiu_uXZ-xW--PxEgC1X9E";
-    private static final String baseUrl = "https://www.googleapis.com/books/v1/volumes?q=";
+public class OPACFetcher implements IBookRepositoryFetcher{
 
-    public GoogleBooksFetcher() {
+    private static final String baseUrl = "http://opac.sbn.it/opacmobilegw/search.json?";
+
+    public OPACFetcher() {
     }
 
     /*
@@ -86,8 +83,7 @@ public class GoogleBooksFetcher implements IBookRepositoryFetcher {
 
     public Book searchByIsbn(String isbn){
         String completeUrl = baseUrl +
-                "isbn:" + isbn +
-                "&key=" + googleKey;
+                "isbn=" + isbn;
         if(!isbn.isEmpty())
             return bookSearcher(completeUrl);
         else
@@ -96,8 +92,7 @@ public class GoogleBooksFetcher implements IBookRepositoryFetcher {
 
     public String jsonSearchByIsbn(String isbn){
         String completeUrl = baseUrl +
-                "isbn:" + isbn +
-                "&key=" + googleKey;
+                "isbn:" + isbn;
         if(!isbn.isEmpty())
             return jsonBookSearcher(completeUrl);
         else
@@ -106,9 +101,9 @@ public class GoogleBooksFetcher implements IBookRepositoryFetcher {
 
     public Book searchByTitleAndAuthor(String title, String autSurname, String autName) {
         String completeUrl = baseUrl +
-                "title:" + title.replace(" ", "%20") +
-                "&author:" + autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20") +
-                "&key=" + googleKey;
+                "any=" +
+                title.replace(" ", "%20") +
+                autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20");
         if(!title.isEmpty() && !autSurname.isEmpty() && !autName.isEmpty())
             return bookSearcher(completeUrl);
         else
@@ -117,9 +112,9 @@ public class GoogleBooksFetcher implements IBookRepositoryFetcher {
 
     public String jsonSearchByTitleAndAuthor(String title, String autSurname, String autName) {
         String completeUrl = baseUrl +
-                "title:" + title.replace(" ", "%20") +
-                "&author:" + autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20") +
-                "&key=" + googleKey;
+                "any=" +
+                title.replace(" ", "%20") +
+                autSurname.replace(" ", "%20") + "%20" + autName.replace(" ", "%20");
         if(!title.isEmpty() && !autSurname.isEmpty() && !autName.isEmpty())
             return jsonBookSearcher(completeUrl);
         else
@@ -152,7 +147,7 @@ public class GoogleBooksFetcher implements IBookRepositoryFetcher {
                 json = json + output;
             }
 
-            Book book = GoogleBooksUtils.getBook(json);
+            Book book = OPACUtils.getBook(json);
 
             if (book == null)
                 return null;

@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.DialogInterface;
@@ -35,8 +37,8 @@ import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
@@ -46,11 +48,16 @@ import me.sudar.zxingorient.ZxingOrientResult;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
+    private static final String DEFAULT_GENRE = "Romanzo";
+    private static final String DEFAULT_STATUS = "Non letto";
+
     private EditText txtTitle, txtYear, txtIsbn10, txtIsbn13, txtNotes;
     private ImageView imgThumbnail;
     private AutoCompleteTextView acTxtAuthor;
     private Spinner spinGenre, spinStatus;
-    private LinearLayout linLayout;
+    //private LinearLayout linLayout;
+    private RelativeLayout relLayout;
+    private ProgressBar progCircle;
 
     private String savedGenre;
     private String savedAuthor;
@@ -69,7 +76,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_book_detail);
 
         //Assegnamento handle oggetti visualizzati in activity
-        linLayout = (LinearLayout) findViewById(R.id.detailLinLayout);
+        relLayout = (RelativeLayout) findViewById(R.id.detailRelLayout);
+        progCircle = (ProgressBar) findViewById(R.id.detailsProgCir);
 
         txtTitle = (EditText) findViewById(R.id.txtTitle);
         txtYear = (EditText) findViewById(R.id.txtYear);
@@ -116,7 +124,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
         //Listener
         spinGenre.setOnItemSelectedListener(this);
-        linLayout.setOnTouchListener(new View.OnTouchListener()
+        relLayout.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
             public boolean onTouch(View view, MotionEvent ev)
@@ -127,6 +135,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         });
 
         //Individuo il flavour e preparo l'activity di conseguenza
+        progCircle.setVisibility(View.GONE);
         switch (this.getIntent().getStringExtra(GlobalConstants.DETAILS_ACTIVITY_FLAVOUR)){
             case GlobalConstants.DETAILS_SHOW_UPDATE: {
                 //Recupero libro da visualizzare
@@ -215,19 +224,22 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             if(scanResult.getContents() == null) {
                 Toast.makeText(this, "Scansione cancellata", Toast.LENGTH_SHORT).show();
             } else {
+                fetchBook(scanResult.getContents());
+                /*
                 this.currentBook = this.fetchBook(scanResult.getContents());
                 if(currentBook == null){
                     Toast.makeText(this, "Nessun libro trovato", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(currentBook.getGenre() == null)
-                    currentBook.setGenre("Romanzo");
+                    currentBook.setGenre(DEFAULT_GENRE);
                 if(currentBook.getStatus() == null || currentBook.getStatus().isEmpty())
-                    currentBook.setStatus("Non Letto");
+                    currentBook.setStatus(DEFAULT_STATUS);
                 if(currentBook.getNotes() == null || currentBook.getNotes().isEmpty())
                     currentBook.setNotes("");
                 String jsonBook = this.currentBook.jsonSerialize();
                 this.showBookFlavour(jsonBook);
+                */
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
@@ -243,6 +255,11 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 .setBeep(true)
                 .showInfoBox(false)
                 .initiateScan();
+
+        /**
+         * TEST
+         */
+        //fetchBook("9788804611998");
     }
 
     private void btnSaveLogic(){
@@ -317,17 +334,14 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         return true;
     }
 
-    private Book fetchBook(String barcode){
-        Book book = null;
+    private void fetchBook(String barcode){
         try {
             String[] params = {barcode, barcode, "", "", ""};
-            book = new GoogleBooksFetcher().execute(params).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            FetchBookTask fetchBookTask = new FetchBookTask(this.progCircle);
+            fetchBookTask.execute(params);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return book;
     }
 
     private String[] fetchGenresArray() {
@@ -402,7 +416,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         this.savedGenre = book.getGenre().getName();
         this.savedAuthor = authors;
 
-        ThumbnailTask thumbTask = new ThumbnailTask();
+        ThumbnailTask thumbTask = new ThumbnailTask(this.progCircle);
         thumbTask.execute(book);
 
     }
@@ -589,66 +603,58 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         Toast.makeText(this, msg, len).show();
     }
 
-    private class DeserializeTask  extends AsyncTask<String, Void, Book> {
+    private class FetchBookTask  extends AsyncTask<String, Void, Book> {
+
+        private final ProgressBar progressBar;
+
+        public FetchBookTask(final ProgressBar _progressBar){
+            this.progressBar = _progressBar;
+        }
+
         @Override
         protected Book doInBackground(String... params) {
-            // Conversione JSON in lista di libri
-            String strBook = params[0];
-            currentBook = JSONHelper.bookDeserialize(jsonBook);
-            return currentBook;
+            BookRepositoryDispatcher repoDispatcher = new BookRepositoryDispatcher();
+            Book book = repoDispatcher.getBookSync(params);
+            return book;
         }
 
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            //TODO: progCircle.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
         }
-
-        @Override
-        protected void onProgressUpdate(Void[] values) {
-
-        };
 
         @Override
         protected void onPostExecute(final Book book) {
-            // Scrivo dettagli del libro su activity
+            // Scrivo lista di libri su activity
             super.onPostExecute(book);
+            if(book == null)
+                showToast("Nessun libro trovato", Toast.LENGTH_SHORT);
+            if(book.getGenre() == null)
+                book.setGenre(DEFAULT_GENRE);
+            if(book.getStatus() == null || book.getStatus().isEmpty())
+                book.setStatus(DEFAULT_STATUS);
+            if(book.getNotes() == null || book.getNotes().isEmpty())
+                book.setNotes("");
+            showBookFlavour(book.jsonSerialize());
 
-            List<Author> authorsList = book.getAuthors();
-            Drawable bookCover = null;
-            String authors = "";
-
-            //AUTORE SINGOLO
-            for (Author aut : authorsList){
-                authors += aut.getSurname() + ", " + aut.getName() + "\n";
-            }
-
-            txtTitle.setText(book.getTitle());
-            acTxtAuthor.setText(authors);
-            txtYear.setText(book.getYear());
-            txtIsbn10.setText(book.getIsbn10());
-            txtIsbn13.setText(book.getIsbn13());
-            txtNotes.setText(book.getNotes());
-
-            setGenreSpinnerText(book.getGenre().getName());
-            setStatusSpinnerText(book.getStatus());
-            savedGenre = book.getGenre().getName();
-            savedAuthor = authors;
-            //TODO: progCircle.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected void onCancelled() {
-            //mAuthTask = null;
+            progressBar.setVisibility(View.GONE);
         }
     }
 
     private class ThumbnailTask  extends AsyncTask<Book, Void, Drawable> {
+
+        private final ProgressBar progressBar;
+
+        public ThumbnailTask(final ProgressBar _progressBar){
+            this.progressBar = _progressBar;
+        }
+
         @Override
         protected Drawable doInBackground(Book... params) {
             // Fetch book cover
             Book book = params[0];
-            Drawable bookCover = book.fetchThumbnail(true);
+            Drawable bookCover = book.fetchThumbnail();
             if(bookCover == null)
                 bookCover = ContextCompat.getDrawable(BookDetailActivity.this, R.drawable.cover_not_found);
             return bookCover;
@@ -657,20 +663,15 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            //TODO: progCircle.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
         }
-
-        @Override
-        protected void onProgressUpdate(Void[] values) {
-
-        };
 
         @Override
         protected void onPostExecute(final Drawable bookCover) {
             // Scrivo lista di libri su activity
             super.onPostExecute(bookCover);
             imgThumbnail.setImageDrawable(bookCover);
-            //TODO: progCircle.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
 
         @Override

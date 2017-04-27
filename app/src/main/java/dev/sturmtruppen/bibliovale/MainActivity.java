@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
@@ -25,6 +26,7 @@ import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btnSearch, btnNewBook, btnOpenConfig, btnWishList, btnStats;
     private ProgressBar progCircle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

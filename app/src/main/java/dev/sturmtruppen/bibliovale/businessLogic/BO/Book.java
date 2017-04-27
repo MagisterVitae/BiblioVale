@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
 
@@ -183,32 +183,19 @@ public class Book{
         this.genre = genre;
     }
 
-    public Drawable fetchThumbnail(){
-        return fetchThumbnail(false);
-    }
 
-    public Drawable fetchThumbnail(Boolean sync){
-        Book book = null;
-        String[] params = {this.isbn13, this.isbn10, this.title, this.authors.get(0).getSurname(), this.authors.get(0).getName()};
-        /*
-        if (TextUtils.isEmpty(this.isbn10) && TextUtils.isEmpty(this.isbn13))
-            return null;
-        */
+    public Drawable fetchThumbnail(){
+        Drawable thumbnail = null;
+
         try {
-            if(sync)
-                book = new GoogleBooksFetcher().getBookSync(params);
-            else
-                book = new GoogleBooksFetcher().execute(params).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
+            thumbnail = new BookRepositoryDispatcher().fetchThumbnail(this);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        if (book == null)
+        if (thumbnail == null)
             return null;
-        return book.getThumbnail();
+        return thumbnail;
     }
 
     public String getNotes() {

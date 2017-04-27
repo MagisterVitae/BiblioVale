@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
 import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
@@ -200,15 +201,18 @@ public class BarcodeScanActivity extends AppCompatActivity implements View.OnCli
 
     private Book fetchBook(String barcode){
         Book book = null;
+        /*
         try {
             String[] params = {barcode, barcode, "", "", ""};
-            book = new GoogleBooksFetcher().execute(params).get();
+            book = new BookRepositoryDispatcher().execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        */
         return book;
+
     }
 
     /*
