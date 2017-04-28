@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
 
 public class ConfigurationActivity extends AppCompatActivity implements View.OnClickListener{
     EditText txtConfigURL;

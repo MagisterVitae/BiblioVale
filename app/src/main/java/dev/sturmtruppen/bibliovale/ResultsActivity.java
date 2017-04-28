@@ -1,14 +1,11 @@
 package dev.sturmtruppen.bibliovale;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,11 +13,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.PutExtraPair;
 import dev.sturmtruppen.bibliovale.presentationLogic.ResultsListAdapter;
 
 public class ResultsActivity extends AppCompatActivity {

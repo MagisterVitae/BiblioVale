@@ -1,18 +1,8 @@
-package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
+package dev.sturmtruppen.bibliovale.dataLayer;
 
 import android.os.AsyncTask;
-import android.view.View;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import dev.sturmtruppen.bibliovale.StatsActivity;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.HttpConnectionHelper;
 
 /**
  * Created by Matteo on 27/08/2016.

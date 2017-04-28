@@ -1,23 +1,14 @@
 package dev.sturmtruppen.bibliovale;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceGroup;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -25,17 +16,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
+
 import org.apache.commons.lang3.text.WordUtils;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
-
-import static android.R.id.progress;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.PutExtraPair;
 
 public class StatsActivity extends AppCompatActivity implements View.OnClickListener{
     private TableLayout layStatsTable;

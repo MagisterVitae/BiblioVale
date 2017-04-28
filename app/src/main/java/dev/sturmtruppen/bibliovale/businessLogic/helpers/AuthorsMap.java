@@ -1,9 +1,9 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
 import java.util.List;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Author;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
 
 /**
  * Created by Matteo on 20/04/2017.

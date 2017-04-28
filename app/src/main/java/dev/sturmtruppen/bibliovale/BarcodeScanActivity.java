@@ -1,38 +1,22 @@
 package dev.sturmtruppen.bibliovale;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.zxing.common.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.GoogleBooksFetcher;
-import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.AuthorsMap;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.GenresMap;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 
 
 public class BarcodeScanActivity extends AppCompatActivity implements View.OnClickListener{

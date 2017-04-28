@@ -1,11 +1,7 @@
 package dev.sturmtruppen.bibliovale.businessLogic;
 
-import android.os.AsyncTask;
-
-import java.util.Map;
-
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.AuthorsMap;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.GenresMap;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AuthorsMap;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.GenresMap;
 
 /**
  * Created by Matteo on 27/08/2016.

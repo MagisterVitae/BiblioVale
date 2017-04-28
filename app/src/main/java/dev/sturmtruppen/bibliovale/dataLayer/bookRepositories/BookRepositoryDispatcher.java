@@ -1,4 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
+package dev.sturmtruppen.bibliovale.dataLayer.bookRepositories;
 
 import android.graphics.drawable.Drawable;
 
@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 
 /**
  * Created by Matteo on 26/04/2017.

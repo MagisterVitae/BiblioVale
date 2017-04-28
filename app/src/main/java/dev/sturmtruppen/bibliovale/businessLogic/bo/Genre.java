@@ -1,4 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.BO;
+package dev.sturmtruppen.bibliovale.businessLogic.bo;
 
 import org.json.JSONException;
 import org.json.JSONObject;

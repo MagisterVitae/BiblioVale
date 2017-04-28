@@ -1,19 +1,15 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
 
 /**
  * Created by Matteo on 25/07/2016.

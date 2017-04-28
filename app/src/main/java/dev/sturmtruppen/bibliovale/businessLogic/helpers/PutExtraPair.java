@@ -1,6 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
-
-import android.os.Bundle;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
 /**
  * Created by Matteo on 03/12/2016.

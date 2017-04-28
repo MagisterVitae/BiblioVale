@@ -18,10 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -31,17 +29,16 @@ import android.content.DialogInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Author;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Genre;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.dataLayer.bookRepositories.BookRepositoryDispatcher;
+import dev.sturmtruppen.bibliovale.dataLayer.DBApiResponse;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
 
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
@@ -628,8 +625,11 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         protected void onPostExecute(final Book book) {
             // Scrivo lista di libri su activity
             super.onPostExecute(book);
-            if(book == null)
+            if(book == null){
                 showToast("Nessun libro trovato", Toast.LENGTH_SHORT);
+                progressBar.setVisibility(View.GONE);
+                return;
+            }
             if(book.getGenre() == null)
                 book.setGenre(DEFAULT_GENRE);
             if(book.getStatus() == null || book.getStatus().isEmpty())

@@ -1,16 +1,10 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import java.io.Serializable;
 import java.util.List;
-
-import dev.sturmtruppen.bibliovale.BookDetailActivity;
-import dev.sturmtruppen.bibliovale.MainActivity;
 
 /**
  * Created by Matteo on 03/12/2016.

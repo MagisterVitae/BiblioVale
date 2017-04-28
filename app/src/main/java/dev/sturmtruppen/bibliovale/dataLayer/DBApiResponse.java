@@ -1,4 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
+package dev.sturmtruppen.bibliovale.dataLayer;
 
 import org.json.JSONException;
 import org.json.JSONObject;

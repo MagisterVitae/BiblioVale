@@ -1,4 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
 import android.util.Pair;
 
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.DBApiResponse;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Author;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Genre;
+import dev.sturmtruppen.bibliovale.dataLayer.DBApiResponse;
 
 /**
  * Created by Matteo on 27/08/2016.

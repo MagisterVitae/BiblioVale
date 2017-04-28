@@ -1,6 +1,6 @@
-package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
+package dev.sturmtruppen.bibliovale.dataLayer.bookRepositories;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 
 /**
  * Created by Matteo on 24/04/2017.

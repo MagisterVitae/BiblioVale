@@ -1,20 +1,18 @@
-package dev.sturmtruppen.bibliovale.businessLogic.BO;
+package dev.sturmtruppen.bibliovale.businessLogic.bo;
 
 
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BookRepositoryDispatcher;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.dataLayer.bookRepositories.BookRepositoryDispatcher;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.JSONHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
 
 public class Book{
 

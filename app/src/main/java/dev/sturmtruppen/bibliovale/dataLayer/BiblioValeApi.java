@@ -1,14 +1,12 @@
-package dev.sturmtruppen.bibliovale.businessLogic;
+package dev.sturmtruppen.bibliovale.dataLayer;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.TextUtils;
 
 import java.util.concurrent.ExecutionException;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.DataFetchers.BiblioValeDataFetcher;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
 
 /**
  * Created by Matteo on 25/07/2016.

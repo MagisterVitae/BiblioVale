@@ -1,18 +1,11 @@
-package dev.sturmtruppen.bibliovale.businessLogic.Helpers;
+package dev.sturmtruppen.bibliovale.businessLogic.helpers;
 
-import android.support.annotation.NonNull;
-import android.util.Pair;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Genre;
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Genre;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
 
 /**
  * Created by Matteo on 18/04/2017.

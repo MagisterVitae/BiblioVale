@@ -1,7 +1,6 @@
 package dev.sturmtruppen.bibliovale;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -17,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
-import dev.sturmtruppen.bibliovale.businessLogic.BiblioValeApi;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.ActivityFlowHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.HttpConnectionHelper;
-import dev.sturmtruppen.bibliovale.businessLogic.Helpers.PutExtraPair;
+import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.HttpConnectionHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.PutExtraPair;
 
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener{
 

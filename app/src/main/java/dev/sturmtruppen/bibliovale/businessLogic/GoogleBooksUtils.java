@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Author;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Author;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 
 public final class GoogleBooksUtils{
 

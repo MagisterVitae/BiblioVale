@@ -8,11 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import dev.sturmtruppen.bibliovale.R;
-import dev.sturmtruppen.bibliovale.ResultsActivity;
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 
 /**
  * Created by Matteo on 18/04/2017.

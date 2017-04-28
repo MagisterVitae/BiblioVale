@@ -1,7 +1,4 @@
-package dev.sturmtruppen.bibliovale.businessLogic.DataFetchers;
-
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+package dev.sturmtruppen.bibliovale.dataLayer.bookRepositories;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import dev.sturmtruppen.bibliovale.businessLogic.BO.Book;
+import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.OPACUtils;
 
 /**
