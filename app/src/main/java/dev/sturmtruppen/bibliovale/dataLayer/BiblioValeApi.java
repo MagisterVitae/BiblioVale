@@ -276,7 +276,7 @@ public class BiblioValeApi {
         return jsonResponse;
     }
 
-    public static String getWishList(){
+    public static String getWishList(Boolean sync){
         String jsonBookList = "";
 
         // Preparazione url per chiamata REST
@@ -286,7 +286,10 @@ public class BiblioValeApi {
 
         // Fetch book list
         try {
-            jsonBookList = new BiblioValeDataFetcher().execute(urlString).get();
+            if(sync)
+                jsonBookList = new BiblioValeDataFetcher().getDataSync(urlString);
+            else
+                jsonBookList = new BiblioValeDataFetcher().execute(urlString).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

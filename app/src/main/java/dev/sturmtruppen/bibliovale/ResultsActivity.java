@@ -15,16 +15,23 @@ import java.util.List;
 
 import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.GlobalConstants;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AasyncActivity;
 import dev.sturmtruppen.bibliovale.businessLogic.helpers.ActivityFlowHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AsyncHelper;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AuthorsMap;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.GenresMap;
 import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
 import dev.sturmtruppen.bibliovale.businessLogic.helpers.PutExtraPair;
 import dev.sturmtruppen.bibliovale.presentationLogic.ResultsListAdapter;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AasyncActivity {
+    private static final String DESERIALIZE_TASK = "DESERIALIZE_TASK";
+
     private ListView activityBookList;
 
     List<Book> books = new ArrayList<Book>();
     private ProgressBar progCircle;
+    private String jsonBookList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +71,35 @@ public class ResultsActivity extends AppCompatActivity {
         progCircle.setVisibility(View.GONE);
     }
 
+    @Override
+    public List<Object> doBackgroundWork(String taskName) {
+        switch (taskName){
+            case DESERIALIZE_TASK:{
+                return deserializeTaskBackground();
+            }
+            default: return null;
+        }
+    }
+
+    @Override
+    public void onAsyncCallBack(List<Object> data) {
+        String taskName = (String) data.get(0);
+        List<Object> tail = data.subList(1, data.size());
+
+        switch (taskName){
+            case DESERIALIZE_TASK:{
+                deserializeTaskPost(tail);
+                break;
+            }
+            default: break;
+        }
+    }
+
     private void showResults(){
         // Recupero lista di libri
-        String jsonBookList = this.getIntent().getStringExtra(GlobalConstants.BOOKLIST_KEY);
+        jsonBookList = this.getIntent().getStringExtra(GlobalConstants.BOOKLIST_KEY);
         // Deserializza in Asynctask e mostra sull'activity
-        DeserializeTask dTask = new DeserializeTask();
-        dTask.execute(jsonBookList);
+        deserializeTaskPre();
     }
 
     @Nullable
@@ -90,43 +120,34 @@ public class ResultsActivity extends AppCompatActivity {
         ActivityFlowHelper.goToActivity(this, BookDetailActivity.class, putExtraList);
     }
 
-    private class DeserializeTask  extends AsyncTask<String, Void, List<Book>> {
-        @Override
-        protected List<Book> doInBackground(String... params) {
-            // Conversione JSON in lista di libri
-            String strBooks = params[0];
-            books = JSONHelper.bookListDeserialize(strBooks);
-            return books;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progCircle.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onProgressUpdate(Void[] values) {
-
-        };
-
-        @Override
-        protected void onPostExecute(final List<Book> books) {
-            // Scrivo lista di libri su activity
-            super.onPostExecute(books);
-            final ArrayList <Book> bookList = new ArrayList<Book>();
-            for (int i = 0; i < books.size(); ++i) {
-                bookList.add(books.get(i));
-            }
-            activityBookList.setAdapter(new ResultsListAdapter(ResultsActivity.this, bookList));
-            progCircle.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected void onCancelled() {
-            //mAuthTask = null;
-        }
+    /**
+     * AsyncTaskHelper Framework
+     */
+    private void deserializeTaskPre(){
+        //Background
+        AsyncHelper asyncHelper = new AsyncHelper(DESERIALIZE_TASK, this, progCircle);
+        asyncHelper.execute();
     }
 
+    private List<Object> deserializeTaskBackground(){
+        List<Object> result = new ArrayList<Object>();
+
+        // Conversione JSON in lista di libri
+        books = JSONHelper.bookListDeserialize(jsonBookList);
+
+        result.add(books);
+        return result;
+    }
+
+    private void deserializeTaskPost(List<Object> results){
+        List<Book> books = (ArrayList<Book>) results.get(0);
+
+        // Scrivo lista di libri su activity
+        final ArrayList <Book> bookList = new ArrayList<Book>();
+        for (int i = 0; i < books.size(); ++i) {
+            bookList.add(books.get(i));
+        }
+        activityBookList.setAdapter(new ResultsListAdapter(ResultsActivity.this, bookList));
+    }
 
 }

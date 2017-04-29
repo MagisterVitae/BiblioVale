@@ -3,10 +3,8 @@ package dev.sturmtruppen.bibliovale;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -33,6 +31,8 @@ import java.util.List;
 import dev.sturmtruppen.bibliovale.businessLogic.bo.Author;
 import dev.sturmtruppen.bibliovale.businessLogic.bo.Book;
 import dev.sturmtruppen.bibliovale.businessLogic.bo.Genre;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AasyncActivity;
+import dev.sturmtruppen.bibliovale.businessLogic.helpers.AsyncHelper;
 import dev.sturmtruppen.bibliovale.dataLayer.BiblioValeApi;
 import dev.sturmtruppen.bibliovale.dataLayer.bookRepositories.BookRepositoryDispatcher;
 import dev.sturmtruppen.bibliovale.dataLayer.DBApiResponse;
@@ -43,10 +43,12 @@ import dev.sturmtruppen.bibliovale.businessLogic.helpers.JSONHelper;
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
 
-public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class BookDetailActivity extends AasyncActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private static final String DEFAULT_GENRE = "Romanzo";
     private static final String DEFAULT_STATUS = "Non letto";
+    private static final String FETCH_BOOK_TASK = "FETCH_BOOK_TASK";
+    private static final String THUMBNAIL_TASK = "THUMBNAIL_TASK";
 
     private EditText txtTitle, txtYear, txtIsbn10, txtIsbn13, txtNotes;
     private ImageView imgThumbnail;
@@ -66,6 +68,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     String[] genresArray;
     String[] authorsArray;
+    String[] fetchBookTaskParams;
+    Book thumbnailTaskParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,27 +226,42 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 Toast.makeText(this, "Scansione cancellata", Toast.LENGTH_SHORT).show();
             } else {
                 fetchBook(scanResult.getContents());
-                /*
-                this.currentBook = this.fetchBook(scanResult.getContents());
-                if(currentBook == null){
-                    Toast.makeText(this, "Nessun libro trovato", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(currentBook.getGenre() == null)
-                    currentBook.setGenre(DEFAULT_GENRE);
-                if(currentBook.getStatus() == null || currentBook.getStatus().isEmpty())
-                    currentBook.setStatus(DEFAULT_STATUS);
-                if(currentBook.getNotes() == null || currentBook.getNotes().isEmpty())
-                    currentBook.setNotes("");
-                String jsonBook = this.currentBook.jsonSerialize();
-                this.showBookFlavour(jsonBook);
-                */
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, intent);
         }
 
+    }
+
+    @Override
+    public List<Object> doBackgroundWork(String taskName) {
+        switch (taskName){
+            case FETCH_BOOK_TASK:{
+                return fetchBookTaskBackground();
+            }
+            case THUMBNAIL_TASK:{
+                return thumbnailTaskBackground();
+            }
+            default: return null;
+        }
+    }
+
+    @Override
+    public void onAsyncCallBack(List<Object> data) {
+        String taskName = (String) data.get(0);
+        List<Object> tail = data.subList(1, data.size());
+
+        switch (taskName){
+            case FETCH_BOOK_TASK:{
+                fetchBookTaskPost(tail);
+                break;
+            }
+            case THUMBNAIL_TASK:{
+                thumbnailTaskPost(tail);
+            }
+            default: break;
+        }
     }
 
     private void scanBarcode(){
@@ -252,7 +271,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 .setBeep(true)
                 .showInfoBox(false)
                 .initiateScan();
-
         /**
          * TEST
          */
@@ -333,9 +351,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     private void fetchBook(String barcode){
         try {
-            String[] params = {barcode, barcode, "", "", ""};
-            FetchBookTask fetchBookTask = new FetchBookTask(this.progCircle);
-            fetchBookTask.execute(params);
+            fetchBookTaskParams = new String[]{barcode, barcode, "", "", ""};
+            fetchBookTaskPre();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -413,9 +430,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         this.savedGenre = book.getGenre().getName();
         this.savedAuthor = authors;
 
-        ThumbnailTask thumbTask = new ThumbnailTask(this.progCircle);
-        thumbTask.execute(book);
-
+        thumbnailTaskParams = book;
+        thumbnailTaskPre();
+        //ThumbnailTask thumbTask = new ThumbnailTask(this.progCircle);
+        //thumbTask.execute(book);
     }
 
     private void newBookFlavour(){
@@ -600,84 +618,65 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         Toast.makeText(this, msg, len).show();
     }
 
-    private class FetchBookTask  extends AsyncTask<String, Void, Book> {
-
-        private final ProgressBar progressBar;
-
-        public FetchBookTask(final ProgressBar _progressBar){
-            this.progressBar = _progressBar;
-        }
-
-        @Override
-        protected Book doInBackground(String... params) {
-            BookRepositoryDispatcher repoDispatcher = new BookRepositoryDispatcher();
-            Book book = repoDispatcher.getBookSync(params);
-            return book;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(final Book book) {
-            // Scrivo lista di libri su activity
-            super.onPostExecute(book);
-            if(book == null){
-                showToast("Nessun libro trovato", Toast.LENGTH_SHORT);
-                progressBar.setVisibility(View.GONE);
-                return;
-            }
-            if(book.getGenre() == null)
-                book.setGenre(DEFAULT_GENRE);
-            if(book.getStatus() == null || book.getStatus().isEmpty())
-                book.setStatus(DEFAULT_STATUS);
-            if(book.getNotes() == null || book.getNotes().isEmpty())
-                book.setNotes("");
-            showBookFlavour(book.jsonSerialize());
-
-            progressBar.setVisibility(View.GONE);
-        }
+    /**
+     * AsyncTaskHelper Framework
+     */
+    private void fetchBookTaskPre(){
+        //Background
+        AsyncHelper asyncHelper = new AsyncHelper(FETCH_BOOK_TASK, this, progCircle);
+        asyncHelper.execute();
     }
 
-    private class ThumbnailTask  extends AsyncTask<Book, Void, Drawable> {
+    private List<Object> fetchBookTaskBackground(){
+        List<Object> result = new ArrayList<Object>();
 
-        private final ProgressBar progressBar;
+        BookRepositoryDispatcher repoDispatcher = new BookRepositoryDispatcher();
+        Book book = repoDispatcher.getBookSync(fetchBookTaskParams);
 
-        public ThumbnailTask(final ProgressBar _progressBar){
-            this.progressBar = _progressBar;
+        result.add(book);
+        return result;
+    }
+
+    private void fetchBookTaskPost(List<Object> results){
+        Book book = (Book) results.get(0);
+
+        // Scrivo lista di libri su activity
+        if(book == null){
+            showToast("Nessun libro trovato", Toast.LENGTH_SHORT);
+            return;
         }
+        if(book.getGenre() == null)
+            book.setGenre(DEFAULT_GENRE);
+        if(book.getStatus() == null || book.getStatus().isEmpty())
+            book.setStatus(DEFAULT_STATUS);
+        if(book.getNotes() == null || book.getNotes().isEmpty())
+            book.setNotes("");
+        showBookFlavour(book.jsonSerialize());
+    }
 
-        @Override
-        protected Drawable doInBackground(Book... params) {
-            // Fetch book cover
-            Book book = params[0];
-            Drawable bookCover = book.fetchThumbnail();
-            if(bookCover == null)
-                bookCover = ContextCompat.getDrawable(BookDetailActivity.this, R.drawable.cover_not_found);
-            return bookCover;
-        }
+    private void thumbnailTaskPre(){
+        //Background
+        AsyncHelper asyncHelper = new AsyncHelper(THUMBNAIL_TASK, this, progCircle);
+        asyncHelper.execute();
+    }
 
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
+    private List<Object> thumbnailTaskBackground(){
+        List<Object> result = new ArrayList<Object>();
 
-        @Override
-        protected void onPostExecute(final Drawable bookCover) {
-            // Scrivo lista di libri su activity
-            super.onPostExecute(bookCover);
-            imgThumbnail.setImageDrawable(bookCover);
-            progressBar.setVisibility(View.GONE);
-        }
+        // Fetch book cover
+        Book book = thumbnailTaskParams;
+        Drawable bookCover = book.fetchThumbnail();
+        if(bookCover == null)
+            bookCover = ContextCompat.getDrawable(BookDetailActivity.this, R.drawable.cover_not_found);
 
-        @Override
-        protected void onCancelled() {
-            //mAuthTask = null;
-        }
+        result.add(bookCover);
+        return result;
+    }
+
+    private void thumbnailTaskPost(List<Object> results){
+        Drawable bookCover = (Drawable) results.get(0);
+
+        imgThumbnail.setImageDrawable(bookCover);
     }
 
 }

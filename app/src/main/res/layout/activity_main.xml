@@ -11,12 +11,14 @@
 
     <ProgressBar
         android:id="@+id/mainProgCir"
-        style="@style/android:attr/progressBarStyleLarge"
+        style="android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:elevation="0dp" />
+        android:elevation="0dp"
+        android:translationZ="10dp"
+        tools:visibility="gone" />
 
     <Button
         android:layout_width="match_parent"
