@@ -184,11 +184,13 @@ public class MainActivity extends AasyncActivity implements View.OnClickListener
     }
 
     private List<Object> loadDataTaskBackground(){
+        List<Object> result = new ArrayList<Object>();
+
         //Creo hashmap globale dei generi dei libri
         GlobalConstants.genresMap = new GenresMap();
         //Creo lista globale degli autori
         GlobalConstants.authorsMap = new AuthorsMap();
-        List<Object> result = new ArrayList<Object>();
+
         result.add(true);
         return result;
     }

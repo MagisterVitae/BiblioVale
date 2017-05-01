@@ -266,17 +266,17 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
     }
 
     private void scanBarcode(){
-        /*ZxingOrient integrator = new ZxingOrient(this);
+        ZxingOrient integrator = new ZxingOrient(this);
         integrator.setIcon(R.mipmap.ic_action_barcode)
                 .setInfo("Inquadra il barcode")
                 .setBeep(true)
                 .showInfoBox(false)
                 .initiateScan();
-           */
+
         /**
          * TEST
          */
-        fetchBook("9788807031373");
+        //fetchBook("9788807031373");
     }
 
     private void btnSaveLogic(){

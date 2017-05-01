@@ -21,7 +21,6 @@ public class GlobalConstants {
     public static GenresMap genresMap = null;
     public static AuthorsMap authorsMap = null;
 
-
 }
 
 

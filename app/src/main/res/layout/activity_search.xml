@@ -27,43 +27,39 @@
         android:textStyle="bold|italic"
         android:textSize="35dp" />
 
-    <EditText
+    <AutoCompleteTextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/acSearchAuthor"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtTitle"
-        android:hint="Titolo"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtAuthSurname"
-        android:hint="Cognome Autore"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
+        android:hint="Autore"
+        android:layout_marginTop="12dp"
+        android:enabled="true"
+        android:completionThreshold="1"
         android:singleLine="true"
-        android:layout_below="@+id/txtAuthName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="wrap_content" />
 
-    <EditText
+    <AutoCompleteTextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/acSearchTitle"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtAuthName"
-        android:hint="Nome Autore"
-        android:layout_below="@+id/txtTitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="12dp"
-        android:singleLine="true" />
+        android:layout_below="@+id/acSearchAuthor"
+        android:hint="Titolo"
+        android:enabled="true"
+        android:completionThreshold="1"
+        android:singleLine="true"
+        android:layout_height="wrap_content" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cerca"
         android:id="@+id/btnSearch"
-        android:layout_below="@+id/txtAuthSurname"
+        android:layout_below="@+id/acSearchTitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="13dp" />
