@@ -62,12 +62,13 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
     private String savedAuthor;
     private String jsonBook;
 
-    private Book currentBook;
+    private Book bookToReplace;
 
     private Boolean authorCreated = false;
 
     String[] genresArray;
     String[] authorsArray;
+
     String[] fetchBookTaskParams;
     Book thumbnailTaskParams;
 
@@ -265,16 +266,17 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
     }
 
     private void scanBarcode(){
-        ZxingOrient integrator = new ZxingOrient(this);
+        /*ZxingOrient integrator = new ZxingOrient(this);
         integrator.setIcon(R.mipmap.ic_action_barcode)
                 .setInfo("Inquadra il barcode")
                 .setBeep(true)
                 .showInfoBox(false)
                 .initiateScan();
+           */
         /**
          * TEST
          */
-        //fetchBook("9788804611998");
+        fetchBook("9788807031373");
     }
 
     private void btnSaveLogic(){
@@ -299,14 +301,19 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
                         // Libro posseduto in altra edizione
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle("Attenzione")
-                                .setMessage("Possiedi già questo libro in un'altra edizione, vuoi aggiungerlo?")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                .setMessage("Possiedi già questo libro in un'altra edizione.")
+                                .setPositiveButton("Aggiungi", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         createBook();
                                     }
                                 })
-                                .setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+                                .setNeutralButton("Annulla", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                                .setNegativeButton("Sostituisci", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        updateBook(bookToReplace.jsonSerialize());
                                     }
                                 })
                                 .show();
@@ -318,7 +325,9 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
     }
 
     private int checkBookExists(){
+        bookToReplace = null;
         String jsonBookList = "";
+
         Book bookToSearch = createBookFromActivity("");
         // Cerca per ISBN13
         jsonBookList = BiblioValeApi.getBookByISBN("",bookToSearch.getIsbn13());
@@ -331,7 +340,10 @@ public class BookDetailActivity extends AasyncActivity implements View.OnClickLi
             return 1;
         // Cerca per Autore-Titolo
         jsonBookList = BiblioValeApi.getBook(bookToSearch.getAuthors().get(0).getSurname(),bookToSearch.getAuthors().get(0).getName(), bookToSearch.getTitle(), "", "");
-        if(JSONHelper.bookListDeserialize(jsonBookList).size() != 0)
+        List<Book> bookList = JSONHelper.bookListDeserialize(jsonBookList);
+        if(bookList != null &&  bookList.size() != 0)
+            bookToReplace = bookList.get(0);
+        if(bookToReplace != null)
             return 2;
         return 0;
     }

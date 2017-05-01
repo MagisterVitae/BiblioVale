@@ -56,8 +56,13 @@ public final class OPACUtils {
                 String aut = a.split(" <")[0];
                 author = new Author(aut.split(", ")[1], aut.split(", ")[0]);
             }catch (Exception e){
-                String a = authorsNode.path("autorePrincipale").asText();
-                author = new Author(a.split(", ")[1], a.split(", ")[0]);
+                String a = null;
+                try{
+                    a = authorsNode.path("autorePrincipale").asText();
+                    author = new Author(a.split(", ")[1], a.split(", ")[0]);
+                }catch (Exception e2){
+                    author = new Author("TROVATO", "NON");
+                }
             }
             thumbnailUrl = thumbnailNode.path("copertina").asText();
             isbn = isbnNode.path("isbn").asText().replace("-","");
