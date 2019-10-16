@@ -11,7 +11,7 @@ android {
         applicationId "dev.sturmtruppen.bibliovale"
         minSdkVersion 21
         targetSdkVersion 28
-        versionName '2.0.1.3'
+        versionName '2.0.1.4'
     }
     buildTypes {
         release {
